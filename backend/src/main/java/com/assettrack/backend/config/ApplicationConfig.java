@@ -17,23 +17,35 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            throw new UsernameNotFoundException("to be implemented");
+            throw new UsernameNotFoundException("To be implemented later");
         };
     }
 
+    /**
+     * Configures the AuthenticationProvider which acts as the core engine to verify user credentials.
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        // Pass the userDetailsService directly into the constructor to resolve the compilation error
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService());
+
+        // Set the password encoder to BCrypt
         authProvider.setPasswordEncoder(passwordEncoder());
+
         return authProvider;
     }
 
+    /**
+     * Exposes the AuthenticationManager as a Bean to be used in the AuthController.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Configures BCrypt as the password encoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
