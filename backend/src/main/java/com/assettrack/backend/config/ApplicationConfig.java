@@ -1,5 +1,6 @@
 package com.assettrack.backend.config;
 
+import com.assettrack.backend.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,38 +15,31 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class ApplicationConfig {
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> {
-            throw new UsernameNotFoundException("To be implemented later");
-        };
+    private final UserRepository userRepository;
+
+    public ApplicationConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    /**
-     * Configures the AuthenticationProvider which acts as the core engine to verify user credentials.
-     */
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "User not found with email: " + username));
+    }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        // Pass the userDetailsService directly into the constructor to resolve the compilation error
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService());
-
-        // Set the password encoder to BCrypt
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
     }
 
-    /**
-     * Exposes the AuthenticationManager as a Bean to be used in the AuthController.
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * Configures BCrypt as the password encoder.
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

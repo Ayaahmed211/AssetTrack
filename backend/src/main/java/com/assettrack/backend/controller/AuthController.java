@@ -1,8 +1,11 @@
 package com.assettrack.backend.controller;
 
+import com.assettrack.backend.domain.Role;
+import com.assettrack.backend.domain.User;
 import com.assettrack.backend.dto.JwtAuthResponse;
 import com.assettrack.backend.dto.LoginRequest;
 import com.assettrack.backend.dto.SignupRequest;
+import com.assettrack.backend.repository.UserRepository;
 import com.assettrack.backend.security.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * REST Controller for handling user authentication (Signup and Login).
+ * Member 2 completed the signup integration with UserRepository.
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -23,14 +27,16 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
-    // Constructor Injection
     public AuthController(AuthenticationManager authenticationManager,
                           JwtService jwtService,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -41,7 +47,6 @@ public class AuthController {
     public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
 
         // 1. Authenticate the user credentials
-        // Note: This will throw an exception until Member 2 implements the UserDetailsService and Database Repository.
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -61,35 +66,32 @@ public class AuthController {
 
     /**
      * API Endpoint for User Signup.
-     * Expects a valid name, email, and password.
+     * Completed by Member 2 - saves user to database with hashed password.
      */
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody SignupRequest signupRequest) {
 
-        // 1. Hash the plain-text password using BCrypt
+        // 1. Check if email already exists
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Email already exists!");
+        }
+
+        // 2. Hash the plain-text password using BCrypt
         String hashedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
-        /*
-         * =========================================================
-         * TODO FOR MEMBER 2 (User Roles & User Management):
-         * =========================================================
-         * 1. Check if the email already exists in the UserRepository.
-         * 2. Create a new User entity object.
-         * 3. Set the User's name, email, and the 'hashedPassword'.
-         * 4. Assign a default role (e.g., DEVELOPER).
-         * 5. Save the User entity to the database using UserRepository.
-         * 6. Change this return statement to return a proper success message or the saved User DTO.
-         * =========================================================
-         */
+        // 3. Create a new User entity
+        User newUser = User.builder()
+                .fullName(signupRequest.getName())
+                .email(signupRequest.getEmail())
+                .password(hashedPassword)
+                .role(Role.DEVELOPER)
+                .enabled(true)
+                .build();
 
-        // 2. Temporary response until Member 2 completes their integration
-        String responseMessage = String.format(
-                "Signup API reached successfully!%nEmail: %s%nOriginal Password: %s%nHashed Password: %s%nWaiting for Member 2 to integrate UserRepository.",
-                signupRequest.getEmail(),
-                signupRequest.getPassword(),
-                hashedPassword
-        );
+        // 4. Save the user to the database
+        userRepository.save(newUser);
 
-        return ResponseEntity.ok(responseMessage);
+        // 5. Return success message
+        return ResponseEntity.ok("User registered successfully!");
     }
 }
