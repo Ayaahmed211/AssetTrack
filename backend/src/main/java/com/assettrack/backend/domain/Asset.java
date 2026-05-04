@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import com.assettrack.backend.domain.User;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 /**
  * JPA entity representing a hardware asset (laptop, monitor, or accessory).
@@ -65,6 +69,9 @@ public class Asset {
      * Optional free-text field for condition notes or issues
      * reported by the assigned developer (used by Member 4's condition reports).
      */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_to_id")
+    private User assignedTo;
     @Column(columnDefinition = "TEXT")
     private String notes;
 
