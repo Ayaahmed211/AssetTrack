@@ -8,8 +8,10 @@ import com.assettrack.backend.dto.SignupRequest;
 import com.assettrack.backend.repository.UserRepository;
 import com.assettrack.backend.security.JwtService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,24 +46,29 @@ public class AuthController {
      * Expects a valid email and password. Returns a JWT access token.
      */
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            // 1. Authenticate the user credentials
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        // 1. Authenticate the user credentials
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+            // 2. If authentication is successful, retrieve the user details
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        // 2. If authentication is successful, retrieve the user details
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            // 3. Generate the JWT token for the user
+            String token = jwtService.generateToken(userDetails);
 
-        // 3. Generate the JWT token for the user
-        String token = jwtService.generateToken(userDetails);
+            // 4. Return the token in the response body
+            return ResponseEntity.ok(new JwtAuthResponse(token));
 
-        // 4. Return the token in the response body
-        return ResponseEntity.ok(new JwtAuthResponse(token));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid email or password");
+        }
     }
 
     /**
