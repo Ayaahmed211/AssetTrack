@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard';
 import Reports from './pages/Reports';
 import Users from './pages/Users';
 import MyAssets from './pages/MyAssets';
+import AssetList from './pages/AssetList';
+import AssetDetail from './pages/AssetDetail';
 import './App.css';
 
 function App() {
@@ -53,6 +55,26 @@ function App() {
               <ProtectedRoute>
                 <MainLayout title="My Assets">
                   <MyAssets />
+                </MainLayout>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/assets" 
+            element={
+              <ProtectedRoute>
+                <MainLayout title="Assets">
+                  <AssetList />
+                </MainLayout>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/assets/:id" 
+            element={
+              <ProtectedRoute>
+                <MainLayout title="Asset Detail">
+                  <AssetDetail />
                 </MainLayout>
               </ProtectedRoute>
             } 

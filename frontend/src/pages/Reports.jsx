@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { reportService } from '../services/reportService';
 import UsageStatsChart from '../components/ui/UsageStatsChart';
 import AllocationChart from '../components/ui/AllocationChart';
 import StatusBadge from '../components/ui/StatusBadge';
 
 const Reports = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -97,15 +99,26 @@ const Reports = () => {
               <span>Reports</span>
             </div>
             {conditionData?.topReportedAssets?.map((asset) => (
-              <div className="market-row" style={{ gridTemplateColumns: '2fr 1fr 1fr' }} key={asset.assetId}>
+              <div
+                className="market-row"
+                style={{ gridTemplateColumns: '2fr 1fr 1fr', cursor: 'pointer', transition: 'background 0.15s' }}
+                key={asset.assetId}
+                onClick={() => navigate(`/assets/${asset.assetId}`)}
+                title={`View details for ${asset.brand} ${asset.model}`}
+                onMouseEnter={e => e.currentTarget.style.background = '#f0f4ff'}
+                onMouseLeave={e => e.currentTarget.style.background = ''}
+              >
                 <div>
-                  <strong>{asset.serialNumber}</strong>
+                  <strong style={{ color: 'var(--color-primary)' }}>{asset.serialNumber}</strong>
                   <p>{asset.brand} - {asset.model}</p>
                 </div>
                 <span>
                    <StatusBadge status={asset.latestConditionStatus} variant="warning" size="small" />
                 </span>
-                <span>{asset.reportCount}</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  {asset.reportCount}
+                  <span style={{ fontSize: '12px', color: 'var(--color-primary)', fontWeight: 600 }}>View →</span>
+                </span>
               </div>
             ))}
             {(!conditionData?.topReportedAssets || conditionData.topReportedAssets.length === 0) && (

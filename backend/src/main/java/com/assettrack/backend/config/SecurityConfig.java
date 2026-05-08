@@ -1,4 +1,4 @@
-package com.assettrack.backend.config;
+/*  */package com.assettrack.backend.config;
 
 import com.assettrack.backend.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;

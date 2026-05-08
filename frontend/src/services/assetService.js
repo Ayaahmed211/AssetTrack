@@ -7,6 +7,12 @@ const assetService = {
     return response.data;
   },
 
+  // Create a new asset (Admin/Manager only)
+  createAsset: async (assetData) => {
+    const response = await api.post('/assets', assetData);
+    return response.data;
+  },
+
   // Get assets assigned to the current user
   getMyAssets: async () => {
     const response = await api.get('/assets/my');
@@ -35,7 +41,38 @@ const assetService = {
   getMyConditionReports: async () => {
     const response = await api.get('/allocations/condition-report/my');
     return response.data;
-  }
+  },
+
+  // Search/filter assets — all params optional
+  // Params: { brand, model, serialNumber, status, type, warrantyStatus }
+  searchAssets: async (params = {}) => {
+    const response = await api.get('/assets/search', { params });
+    return response.data;
+  },
+
+  // Get assets by type (LAPTOP | MONITOR | ACCESSORY)
+  getAssetsByType: async (type) => {
+    const response = await api.get(`/assets/type/${type}`);
+    return response.data;
+  },
+
+  // Get assets by status (AVAILABLE | ASSIGNED | UNDER_MAINTENANCE | DECOMMISSIONED)
+  getAssetsByStatus: async (status) => {
+    const response = await api.get(`/assets/status/${status}`);
+    return response.data;
+  },
+
+  // Assign an asset to a user
+  assignAsset: async (allocationData) => {
+    const response = await api.post('/allocations/assign', allocationData);
+    return response.data;
+  },
+
+  // Return an asset (make it available again)
+  returnAsset: async (returnData) => {
+    const response = await api.post('/allocations/return', returnData);
+    return response.data;
+  },
 };
 
 export default assetService;
