@@ -4,8 +4,10 @@ import com.assettrack.backend.domain.AssetStatus;
 import com.assettrack.backend.domain.AssetType;
 import com.assettrack.backend.dto.AssetRequest;
 import com.assettrack.backend.dto.AssetResponse;
+import com.assettrack.backend.dto.AssetSearchRequest;
 import com.assettrack.backend.dto.AssetStatusUpdateRequest;
 import com.assettrack.backend.service.AssetService;
+import com.assettrack.backend.service.SearchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,7 @@ import java.util.List;
 public class AssetController {
 
     private final AssetService assetService;
+    private final SearchService searchService;
 
     // -------------------------------------------------------------------------
     // CRUD
@@ -173,5 +176,48 @@ public class AssetController {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'DEVELOPER')")
     public ResponseEntity<List<AssetResponse>> getAvailableSpares() {
         return ResponseEntity.ok(assetService.getAvailableSpares());
+    }
+
+    // -------------------------------------------------------------------------
+    // Advanced Search (Member 5)
+    // -------------------------------------------------------------------------
+
+    /**
+     * GET /api/assets/search
+     *
+     * Multi-field search with all parameters optional:
+     *   ?serialNumber=SN-001
+     *   ?brand=Dell
+     *   ?model=XPS
+     *   ?status=AVAILABLE        (AVAILABLE | ASSIGNED | UNDER_MAINTENANCE | DECOMMISSIONED)
+     *   ?type=LAPTOP             (LAPTOP | MONITOR | ACCESSORY)
+     *   ?assignedUserId=3
+     *   ?warrantyStatus=EXPIRED  (VALID | EXPIRING_SOON | EXPIRED)
+     *
+     * Any combination of the above is supported.
+     * Omitting a parameter means "any value" for that field.
+     */
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'DEVELOPER')")
+    public ResponseEntity<List<AssetResponse>> search(
+            @RequestParam(required = false) String serialNumber,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String model,
+            @RequestParam(required = false) AssetStatus status,
+            @RequestParam(required = false) AssetType type,
+            @RequestParam(required = false) Long assignedUserId,
+            @RequestParam(required = false) String warrantyStatus) {
+
+        AssetSearchRequest req = AssetSearchRequest.builder()
+                .serialNumber(serialNumber)
+                .brand(brand)
+                .model(model)
+                .status(status)
+                .type(type)
+                .assignedUserId(assignedUserId)
+                .warrantyStatus(warrantyStatus)
+                .build();
+
+        return ResponseEntity.ok(searchService.search(req));
     }
 }
