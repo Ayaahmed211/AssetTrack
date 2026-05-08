@@ -9,7 +9,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "allocation_history")
+@Table(
+    name = "allocation_history",
+    indexes = {
+        @Index(name = "idx_alloc_asset_id",       columnList = "asset_id"),
+        @Index(name = "idx_alloc_assigned_to_id",  columnList = "assigned_to_id"),
+        @Index(name = "idx_alloc_assigned_at",     columnList = "assigned_at")
+    }
+)
 @Data
 @Builder
 @NoArgsConstructor
