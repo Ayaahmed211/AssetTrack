@@ -2,7 +2,11 @@ package com.assettrack.backend.service;
 
 import com.assettrack.backend.domain.*;
 import com.assettrack.backend.dto.*;
+import com.assettrack.backend.exception.ResourceNotFoundException;
 import com.assettrack.backend.repository.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional
 public class AllocationService {
@@ -18,15 +23,21 @@ public class AllocationService {
     private final ConditionReportRepository conditionRepo;
     private final AssetRepository assetRepo;
     private final UserRepository userRepo;
+    private final NotificationService notificationService;
+    private final EmailService emailService;
 
     public AllocationService(AllocationHistoryRepository allocationRepo,
                              ConditionReportRepository conditionRepo,
                              AssetRepository assetRepo,
-                             UserRepository userRepo) {
+                             UserRepository userRepo,
+                             NotificationService notificationService,
+                             EmailService emailService) {
         this.allocationRepo = allocationRepo;
         this.conditionRepo = conditionRepo;
         this.assetRepo = assetRepo;
         this.userRepo = userRepo;
+        this.notificationService = notificationService;
+        this.emailService = emailService;
     }
 
     private User getCurrentUser() {
@@ -47,7 +58,7 @@ public class AllocationService {
 
     private User findUser(Long userId) {
         return userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
     }
 
     // ── ASSIGN ───────────────────────────────────────────────────────────
@@ -57,7 +68,7 @@ public class AllocationService {
         User assignedBy = getCurrentUser();
 
         if (asset.getStatus() == AssetStatus.ASSIGNED) {
-            throw new RuntimeException("Asset already assigned. Use /transfer instead.");
+            throw new IllegalArgumentException("Asset '" + asset.getSerialNumber() + "' is already assigned. Use /transfer instead.");
         }
 
         asset.setAssignedTo(assignedTo);
@@ -73,7 +84,13 @@ public class AllocationService {
                 .notes(request.getNotes())
                 .build();
 
-        return allocationRepo.save(history);
+        AllocationHistory saved = allocationRepo.save(history);
+
+        // Notify the user that the asset was assigned to them
+        notifyAssignment(assignedTo, asset);
+        log.info("Asset {} assigned to user {}", asset.getSerialNumber(), assignedTo.getEmail());
+
+        return saved;
     }
 
     // ── TRANSFER ─────────────────────────────────────────────────────────
@@ -101,7 +118,13 @@ public class AllocationService {
                 .notes(request.getNotes())
                 .build();
 
-        return allocationRepo.save(history);
+        AllocationHistory saved = allocationRepo.save(history);
+
+        // Notify the new owner
+        notifyAssignment(newOwner, asset);
+        log.info("Asset {} transferred to user {}", asset.getSerialNumber(), newOwner.getEmail());
+
+        return saved;
     }
 
     // ── RETURN ───────────────────────────────────────────────────────────
@@ -147,6 +170,16 @@ public class AllocationService {
         return allocationRepo.findAll();
     }
 
+    /**
+     * Paginated version of getAllHistory.
+     * Used by GET /api/allocations/history?page=0&size=20
+     * Default: page 0, size 20, sorted by assignedAt DESC.
+     */
+    @Transactional(readOnly = true)
+    public Page<AllocationHistory> getAllHistoryPaged(Pageable pageable) {
+        return allocationRepo.findAllByOrderByAssignedAtDesc(pageable);
+    }
+
     // ── CONDITION REPORTS ─────────────────────────────────────────────────
     public ConditionReport createConditionReport(ConditionReportRequest request) {
         Asset asset = findAsset(request.getAssetId());
@@ -160,7 +193,15 @@ public class AllocationService {
                 .reportedAt(LocalDateTime.now())
                 .build();
 
-        return conditionRepo.save(report);
+        ConditionReport saved = conditionRepo.save(report);
+
+        // Notify all ADMINs and MANAGERs about the filed report
+        notifyConditionReport(asset, request.getConditionStatus(),
+                reportedBy.getFullName(), request.getDescription());
+        log.info("Condition report filed for asset {} by {}",
+                asset.getSerialNumber(), reportedBy.getEmail());
+
+        return saved;
     }
 
     @Transactional(readOnly = true)
@@ -171,5 +212,62 @@ public class AllocationService {
     @Transactional(readOnly = true)
     public List<ConditionReport> getAllConditionReports() {
         return conditionRepo.findAll();
+    }
+
+    // ── Private notification helpers ──────────────────────────────────────────
+
+    /**
+     * Send in-app notification + email when an asset is assigned or transferred.
+     * Runs within the same transaction — notification is persisted atomically.
+     */
+    private void notifyAssignment(User assignedTo, Asset asset) {
+        try {
+            notificationService.createAssignmentNotification(
+                    assignedTo,
+                    asset.getSerialNumber(),
+                    asset.getBrand(),
+                    asset.getModel());
+            // Email is @Async — won't block the transaction
+            emailService.sendAssetAssignedNotification(
+                    assignedTo.getEmail(),
+                    assignedTo.getFullName(),
+                    asset.getSerialNumber(),
+                    asset.getBrand(),
+                    asset.getModel());
+        } catch (Exception e) {
+            // Notification failure must never roll back the allocation
+            log.warn("Failed to send assignment notification to {}: {}",
+                    assignedTo.getEmail(), e.getMessage());
+        }
+    }
+
+    /**
+     * Notify all ADMIN and MANAGER users when a condition report is filed.
+     */
+    private void notifyConditionReport(Asset asset, String conditionStatus,
+                                        String reporterName, String description) {
+        List<User> admins   = userRepo.findByRole(Role.ADMIN);
+        List<User> managers = userRepo.findByRole(Role.MANAGER);
+        admins.addAll(managers);
+
+        for (User admin : admins) {
+            try {
+                notificationService.createConditionReportNotification(
+                        admin,
+                        asset.getSerialNumber(),
+                        conditionStatus,
+                        reporterName);
+                emailService.sendConditionReportAlert(
+                        admin.getEmail(),
+                        admin.getFullName(),
+                        asset.getSerialNumber(),
+                        conditionStatus,
+                        reporterName,
+                        description);
+            } catch (Exception e) {
+                log.warn("Failed to send condition report notification to {}: {}",
+                        admin.getEmail(), e.getMessage());
+            }
+        }
     }
 }
