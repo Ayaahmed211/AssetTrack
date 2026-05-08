@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import com.assettrack.backend.domain.User;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 /**
  * JPA entity representing a hardware asset (laptop, monitor, or accessory).
@@ -17,12 +21,22 @@ import java.time.LocalDateTime;
  *  - status defaults to AVAILABLE on creation.
  *  - createdAt / updatedAt are managed automatically via JPA lifecycle hooks.
  *
- * Integration notes:
- *  - Member 4 will add an `assignedTo` ManyToOne(User) field here for allocation.
- *  - Member 5's scheduler will query by warrantyExpirationDate using AssetRepository.
+ * Index strategy (Member 5 — query optimisation):
+ *  - idx_asset_status           → DashboardService.countByStatus(), getByStatus()
+ *  - idx_asset_type             → DashboardService.countByType(),   getByType()
+ *  - idx_asset_warranty_expiry  → WarrantyScheduler queries (before/between)
+ *  - idx_asset_assigned_to      → SearchService assignedUserId filter
  */
 @Entity
-@Table(name = "assets")
+@Table(
+    name = "assets",
+    indexes = {
+        @Index(name = "idx_asset_status",          columnList = "status"),
+        @Index(name = "idx_asset_type",             columnList = "type"),
+        @Index(name = "idx_asset_warranty_expiry",  columnList = "warranty_expiration_date"),
+        @Index(name = "idx_asset_assigned_to",      columnList = "assigned_to_id")
+    }
+)
 @Data
 @Builder
 @NoArgsConstructor
@@ -65,6 +79,9 @@ public class Asset {
      * Optional free-text field for condition notes or issues
      * reported by the assigned developer (used by Member 4's condition reports).
      */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_to_id")
+    private User assignedTo;
     @Column(columnDefinition = "TEXT")
     private String notes;
 

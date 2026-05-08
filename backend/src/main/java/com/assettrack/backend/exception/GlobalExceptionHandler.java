@@ -56,6 +56,14 @@ public class GlobalExceptionHandler {
                 "Access denied: insufficient permissions");
     }
 
+    // Handles business-rule violations → 400
+    // e.g. duplicate serial number, warranty date before purchase date
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(
+            IllegalArgumentException ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     // Catches everything else → 500
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneral(Exception ex) {
