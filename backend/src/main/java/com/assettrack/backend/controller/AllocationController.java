@@ -92,4 +92,10 @@ public class AllocationController {
     public ResponseEntity<List<ConditionReport>> allReports() {
         return ResponseEntity.ok(allocationService.getAllConditionReports());
     }
+
+    // ── Condition report: my reports ─────────────────────────────────────────
+    @GetMapping("/condition-report/my")
+    public ResponseEntity<List<ConditionReport>> myReports() {
+        return ResponseEntity.ok(allocationService.getMyConditionReports());
+    }
 }

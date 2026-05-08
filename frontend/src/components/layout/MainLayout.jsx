@@ -7,8 +7,8 @@ const MainLayout = ({ children, title }) => {
   const { user } = useAuth();
   
   const displayUser = user ? {
-    name: user.username || user.email || 'User',
-    avatar: user.username ? user.username.substring(0, 2).toUpperCase() : 
+    name: user.fullName || user.email || 'User',
+    avatar: user.fullName ? user.fullName.substring(0, 2).toUpperCase() : 
             user.email ? user.email.substring(0, 2).toUpperCase() : 'U'
   } : {
     name: 'User',

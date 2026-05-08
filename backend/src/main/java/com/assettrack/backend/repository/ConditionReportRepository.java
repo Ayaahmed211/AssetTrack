@@ -11,4 +11,7 @@ public interface ConditionReportRepository extends JpaRepository<ConditionReport
 
     // All condition reports for one asset (newest first)
     List<ConditionReport> findByAssetIdOrderByReportedAtDesc(Long assetId);
+
+    // All condition reports filed by a specific user (newest first)
+    List<ConditionReport> findByReportedByIdOrderByReportedAtDesc(Long userId);
 }

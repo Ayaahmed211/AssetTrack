@@ -38,6 +38,12 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserRole(id, request));
     }
 
+    @PutMapping("/{id}/approve-role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDto> approveRole(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.approveRole(id));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {

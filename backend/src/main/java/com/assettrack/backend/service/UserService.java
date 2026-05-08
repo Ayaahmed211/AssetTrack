@@ -43,6 +43,20 @@ public class UserService {
     }
 
     @Transactional
+    public UserDto approveRole(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found with id: " + id));
+        
+        if (user.getRequestedRole() != null) {
+            user.setRole(user.getRequestedRole());
+            user.setRequestedRole(null);
+            user = userRepository.save(user);
+        }
+        return mapToDto(user);
+    }
+
+    @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -73,6 +87,7 @@ public class UserService {
                 .fullName(user.getFullName())
                 .role(user.getRole())
                 .enabled(user.isEnabled())
+                .requestedRole(user.getRequestedRole())
                 .build();
     }
 }

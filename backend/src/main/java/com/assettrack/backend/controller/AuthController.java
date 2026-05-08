@@ -58,12 +58,21 @@ public class AuthController {
 
             // 2. If authentication is successful, retrieve the user details
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            User user = userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
             // 3. Generate the JWT token for the user
             String token = jwtService.generateToken(userDetails);
 
-            // 4. Return the token in the response body
-            return ResponseEntity.ok(new JwtAuthResponse(token));
+            // 4. Return the token and user details in the response body
+            return ResponseEntity.ok(JwtAuthResponse.builder()
+                    .accessToken(token)
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .fullName(user.getFullName())
+                    .role(user.getRole())
+                    .tokenType("Bearer")
+                    .build());
 
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -86,12 +95,24 @@ public class AuthController {
         // 2. Hash the plain-text password using BCrypt
         String hashedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
-        // 3. Create a new User entity
+        // 3. Determine roles
+        Role assignedRole = Role.DEVELOPER; // Default role
+        Role reqRole = signupRequest.getRequestedRole();
+        
+        // Only allow requesting MANAGER (ignore ADMIN requests for safety)
+        if (reqRole == Role.MANAGER) {
+            reqRole = Role.MANAGER;
+        } else {
+            reqRole = null;
+        }
+
+        // 4. Create a new User entity
         User newUser = User.builder()
                 .fullName(signupRequest.getName())
                 .email(signupRequest.getEmail())
                 .password(hashedPassword)
-                .role(Role.DEVELOPER)
+                .role(assignedRole)
+                .requestedRole(reqRole)
                 .enabled(true)
                 .build();
 

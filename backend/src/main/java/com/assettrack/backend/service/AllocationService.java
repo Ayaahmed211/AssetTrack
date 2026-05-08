@@ -214,6 +214,12 @@ public class AllocationService {
         return conditionRepo.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<ConditionReport> getMyConditionReports() {
+        User currentUser = getCurrentUser();
+        return conditionRepo.findByReportedByIdOrderByReportedAtDesc(currentUser.getId());
+    }
+
     // ── Private notification helpers ──────────────────────────────────────────
 
     /**

@@ -8,7 +8,10 @@ import com.assettrack.backend.dto.AssetResponse;
 import com.assettrack.backend.dto.AssetStatusUpdateRequest;
 import com.assettrack.backend.exception.ResourceNotFoundException;
 import com.assettrack.backend.repository.AssetRepository;
+import com.assettrack.backend.repository.UserRepository;
+import com.assettrack.backend.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +40,7 @@ public class AssetService {
     private static final int WARRANTY_EXPIRY_WARN_DAYS = 30;
 
     private final AssetRepository assetRepository;
+    private final UserRepository userRepository;
 
     // -------------------------------------------------------------------------
     // CRUD
@@ -72,6 +76,19 @@ public class AssetService {
      */
     public List<AssetResponse> getAllAssets() {
         return assetRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieve assets assigned to the currently logged-in user.
+     */
+    public List<AssetResponse> getMyAssets() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found: " + email));
+        return assetRepository.findByAssignedToId(user.getId())
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

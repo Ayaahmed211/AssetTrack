@@ -59,6 +59,17 @@ public class AssetController {
     }
 
     /**
+     * GET /api/assets/my
+     * Returns assets assigned to the currently authenticated user.
+     * All roles can access this.
+     */
+    @GetMapping("/my")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'DEVELOPER')")
+    public ResponseEntity<List<AssetResponse>> getMyAssets() {
+        return ResponseEntity.ok(assetService.getMyAssets());
+    }
+
+    /**
      * GET /api/assets/{id}
      * Retrieve a single asset by its database ID.
      */

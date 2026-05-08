@@ -36,5 +36,8 @@ public interface AssetRepository extends JpaRepository<Asset, Long>, JpaSpecific
     long countByWarrantyExpirationDateBefore(LocalDate date);
     long countByWarrantyExpirationDateBetween(LocalDate start, LocalDate end);
     long countByTypeAndStatus(AssetType type, AssetStatus status);
+
+    List<Asset> findByAssignedToId(Long userId);
+
     // Dynamic multi-field search via JpaSpecificationExecutor → AssetSpecification + SearchService
 }

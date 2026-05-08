@@ -6,11 +6,17 @@ const authService = {
     try {
       const response = await api.post('/auth/login', { email, password });
       
-      // Backend returns { accessToken, tokenType }
+      // Backend returns { accessToken, tokenType, id, email, fullName, role }
       if (response.data.accessToken) {
         localStorage.setItem('token', response.data.accessToken);
-        // Store user info (email for now, since backend doesn't return user object)
-        const user = { email };
+        
+        const user = {
+          id: response.data.id,
+          email: response.data.email,
+          fullName: response.data.fullName,
+          role: response.data.role
+        };
+        
         localStorage.setItem('user', JSON.stringify(user));
         
         return {
@@ -44,11 +50,12 @@ const authService = {
   // Signup user
   signup: async (userData) => {
     try {
-      // Backend expects { name, email, password }
+      // Backend expects { name, email, password, requestedRole }
       const signupData = {
         name: userData.username,
         email: userData.email,
-        password: userData.password
+        password: userData.password,
+        requestedRole: userData.requestedRole || null
       };
       
       const response = await api.post('/auth/signup', signupData);
