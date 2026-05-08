@@ -6,6 +6,10 @@ import com.assettrack.backend.dto.AllocationRequest;
 import com.assettrack.backend.dto.ConditionReportRequest;
 import com.assettrack.backend.dto.ReturnRequest;
 import com.assettrack.backend.service.AllocationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,10 +55,24 @@ public class AllocationController {
         return ResponseEntity.ok(allocationService.getHistoryByUser(userId));
     }
 
-    // ── History: all ─────────────────────────────────────────────────────────
+    // ── History: all (non-paginated — returns every record) ───────────────────
     @GetMapping("/history")
     public ResponseEntity<List<AllocationHistory>> allHistory() {
         return ResponseEntity.ok(allocationService.getAllHistory());
+    }
+
+    // ── History: all (paginated) ──────────────────────────────────────────────
+    //
+    // Usage: GET /api/allocations/history/paged?page=0&size=20
+    // Returns a Page<AllocationHistory> with totalElements, totalPages, etc.
+    // Default: page 0, 20 records per page, sorted by assignedAt DESC.
+    @GetMapping("/history/paged")
+    public ResponseEntity<Page<AllocationHistory>> allHistoryPaged(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Direction.DESC, "assignedAt"));
+        return ResponseEntity.ok(allocationService.getAllHistoryPaged(pageable));
     }
 
     // ── Condition report: create ─────────────────────────────────────────────
