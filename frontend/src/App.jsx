@@ -25,7 +25,7 @@ function App() {
           <Route 
             path="/dashboard" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
                 <MainLayout title="Dashboard">
                   <Dashboard />
                 </MainLayout>
@@ -35,7 +35,7 @@ function App() {
           <Route 
             path="/reports" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
                 <MainLayout title="Reports">
                   <Reports />
                 </MainLayout>
@@ -45,7 +45,7 @@ function App() {
           <Route 
             path="/users" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
                 <MainLayout title="User Management">
                   <Users />
                 </MainLayout>
@@ -55,7 +55,7 @@ function App() {
           <Route 
             path="/my-assets" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DEVELOPER']}>
                 <MainLayout title="My Assets">
                   <MyAssets />
                 </MainLayout>
@@ -65,7 +65,7 @@ function App() {
           <Route 
             path="/assets" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
                 <MainLayout title="Assets">
                   <AssetList />
                 </MainLayout>
@@ -75,7 +75,7 @@ function App() {
           <Route 
             path="/search" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DEVELOPER']}>
                 <MainLayout title="Search">
                   <Search />
                 </MainLayout>
@@ -85,7 +85,7 @@ function App() {
           <Route 
             path="/notifications" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DEVELOPER']}>
                 <MainLayout title="Notifications">
                   <Notifications />
                 </MainLayout>
@@ -95,7 +95,7 @@ function App() {
           <Route 
             path="/assets/:id" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'DEVELOPER']}>
                 <MainLayout title="Asset Detail">
                   <AssetDetail />
                 </MainLayout>

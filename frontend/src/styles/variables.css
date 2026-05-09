@@ -76,17 +76,44 @@
   /* Layout */
   --sidebar-width: 220px;
   --navbar-height: 84px;
+  
+  /* Semantic variables for form elements and tables */
+  --color-input-bg: #f8fafc;
+  --color-input-border: #e2e8f0;
+  --color-table-header-bg: #f8fafc;
+  --color-table-border: #edf2f7;
+  --color-table-hover: #f8fafc;
+  --color-scrollbar-track: #f1f5f9;
+  --color-scrollbar-thumb: #cbd5e1;
+  --color-scrollbar-hover: #94a3b8;
+  --color-border: #e2e8f0;
 }
 
 [data-theme="dark"] {
-  --color-background: #0f1115;
-  --color-card: #1a1d26;
-  --color-card-blue: #1e2633;
-  --color-card-purple: #25213b;
-  --color-card-green: #1a2a22;
-  --color-card-yellow: #2a261a;
-  --color-text-primary: #f3f4f6;
+  --color-background: #0d0f14;
+  --color-card: #151922;
+  --color-card-blue: #1b2231;
+  --color-card-purple: #231f3a;
+  --color-card-green: #162620;
+  --color-card-yellow: #262316;
+  --color-text-primary: #f9fafb;
   --color-text-secondary: #9ca3af;
   --color-text-light: #6b7280;
-  --color-border: #2d3340;
+  --color-border: #232a37;
+  
+  /* Additional semantic variables for better dark mode handling */
+  --color-input-bg: #1e2633;
+  --color-input-border: #2d3648;
+  --color-table-header-bg: #1a202c;
+  --color-table-border: #232a37;
+  --color-table-hover: #1f2633;
+  --color-scrollbar-track: #151922;
+  --color-scrollbar-thumb: #334155;
+  --color-scrollbar-hover: #475569;
+  
+  /* Status colors light overrides for dark mode */
+  --color-success-light: rgba(34, 197, 94, 0.15);
+  --color-danger-light: rgba(239, 68, 68, 0.15);
+  --color-warning-light: rgba(245, 158, 11, 0.15);
+  --color-info-light: rgba(59, 130, 246, 0.15);
 }

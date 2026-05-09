@@ -24,8 +24,8 @@
 .logo-icon {
   width: 42px;
   height: 42px;
-  background-color: #f6f3e8;
-  border-radius: 12px;
+  background-color: var(--color-card-blue);
+  border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -369,7 +369,7 @@ const AssetList = () => {
   return (
     <div className="al-page">
       <div className="al-header-row">
-        <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>Asset Inventory</h2>
+        <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--color-text-primary)' }}>Asset Inventory</h2>
         {canManage && (
           <button className="btn-submit" onClick={() => setIsCreateModalOpen(true)}>
             + Add New Asset
