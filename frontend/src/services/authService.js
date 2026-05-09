@@ -50,9 +50,8 @@ const authService = {
   // Signup user
   signup: async (userData) => {
     try {
-      // Backend expects { name, email, password, requestedRole }
       const signupData = {
-        name: userData.username,
+        name: userData.name || userData.username,
         email: userData.email,
         password: userData.password,
         requestedRole: userData.requestedRole || null

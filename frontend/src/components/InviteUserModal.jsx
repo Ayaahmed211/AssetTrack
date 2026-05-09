@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
   const [formData, setFormData] = useState({
-    username: '', email: '', password: '', requestedRole: 'DEVELOPER'
+    name: '', email: '', password: '', requestedRole: 'DEVELOPER'
   });
 
   if (!isOpen) return null;
@@ -30,7 +30,7 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '1rem' }}>
             <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Full Name</label>
-            <input required type="text" name="username" value={formData.username} onChange={handleChange} style={{
+            <input required type="text" name="name" value={formData.name} onChange={handleChange} style={{
               width: '100%', padding: '0.75rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)'
             }} />
           </div>
