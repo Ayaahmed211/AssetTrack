@@ -79,7 +79,7 @@ spring.datasource.password=your_local_postgres_password
 
 To test the application's Admin functionalities immediately, you can use the pre-seeded account:
 - **Email:** `admin@test.com`
-- **Password:** `password123` *(or the password used during database seeding)*
+- **Password:** `123456`
 
 **Testing Role-Based Access Control:**
 1. Navigate to the Sign Up page (`http://localhost:5173/signup`).
