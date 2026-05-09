@@ -10,6 +10,8 @@ import Users from './pages/Users';
 import MyAssets from './pages/MyAssets';
 import AssetList from './pages/AssetList';
 import AssetDetail from './pages/AssetDetail';
+import Search from './pages/Search';
+import Notifications from './pages/Notifications';
 import './App.css';
 
 function App() {
@@ -65,6 +67,26 @@ function App() {
               <ProtectedRoute>
                 <MainLayout title="Assets">
                   <AssetList />
+                </MainLayout>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/search" 
+            element={
+              <ProtectedRoute>
+                <MainLayout title="Search">
+                  <Search />
+                </MainLayout>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/notifications" 
+            element={
+              <ProtectedRoute>
+                <MainLayout title="Notifications">
+                  <Notifications />
                 </MainLayout>
               </ProtectedRoute>
             } 

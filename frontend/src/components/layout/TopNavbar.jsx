@@ -1,6 +1,31 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import notificationService from '../../services/notificationService';
 import './TopNavbar.css';
 
 const TopNavbar = ({ title = 'Overview', user = { name: 'User', avatar: 'U' } }) => {
+  const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadUnreadCount = async () => {
+      try {
+        const count = await notificationService.getUnreadCount();
+        if (mounted) setUnreadCount(count);
+      } catch {
+        if (mounted) setUnreadCount(0);
+      }
+    };
+
+    loadUnreadCount();
+    const timer = setInterval(loadUnreadCount, 30000);
+    return () => {
+      mounted = false;
+      clearInterval(timer);
+    };
+  }, []);
+
   return (
     <header className="top-navbar">
       <div className="navbar-content">
@@ -9,19 +34,19 @@ const TopNavbar = ({ title = 'Overview', user = { name: 'User', avatar: 'U' } })
         </div>
         
         <div className="navbar-right">
-          <button className="navbar-icon-btn" title="Search">
+          <button className="navbar-icon-btn" title="Search" onClick={() => navigate('/search')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
           </button>
           
-          <button className="navbar-icon-btn" title="Notifications">
+          <button className="navbar-icon-btn" title="Notifications" onClick={() => navigate('/notifications')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
-            <span className="notification-badge">3</span>
+            <span className="notification-badge">{unreadCount}</span>
           </button>
 
           <button className="navbar-icon-btn" title="Controls">

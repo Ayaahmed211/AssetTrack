@@ -44,7 +44,7 @@ const assetService = {
   },
 
   // Search/filter assets — all params optional
-  // Params: { brand, model, serialNumber, status, type, warrantyStatus }
+  // Params: { brand, model, serialNumber, status, type, assignedUserId, warrantyStatus }
   searchAssets: async (params = {}) => {
     const response = await api.get('/assets/search', { params });
     return response.data;
@@ -59,6 +59,12 @@ const assetService = {
   // Get assets by status (AVAILABLE | ASSIGNED | UNDER_MAINTENANCE | DECOMMISSIONED)
   getAssetsByStatus: async (status) => {
     const response = await api.get(`/assets/status/${status}`);
+    return response.data;
+  },
+
+  // Get available spare laptops
+  getAvailableSpares: async () => {
+    const response = await api.get('/assets/spares');
     return response.data;
   },
 
