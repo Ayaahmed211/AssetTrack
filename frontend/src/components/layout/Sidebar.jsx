@@ -16,7 +16,7 @@ const Sidebar = () => {
       { id: 'reports', label: 'Reports', path: '/reports', roles: ['ADMIN', 'MANAGER'] },
       { id: 'analytics', label: 'Analytics', path: '/analytics', roles: ['ADMIN', 'MANAGER'] },
       { id: 'settings', label: 'Settings', path: '/settings', roles: ['ADMIN', 'MANAGER'] },
-      { id: 'users', label: 'Users', path: '/users', roles: ['ADMIN'] },
+      { id: 'users', label: 'Users', path: '/users', roles: ['ADMIN', 'MANAGER'] },
     ],
     []
   );
