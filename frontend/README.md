@@ -1,16 +1,34 @@
-# React + Vite
+# AssetTrack - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This folder contains the React frontend codebase for the AssetTrack application.
 
-Currently, two official plugins are available:
+## Technology Stack
+- React
+- Vite
+- Context API (State Management)
+- npm Build Tool
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Setup Instructions
 
-## React Compiler
+### 1. Prerequisites
+Ensure you have Node.js (v16+) and npm installed on your machine.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. Environment Variables
+The application connects to the Spring Boot backend. Create a `.env` file in this `frontend/` directory if one does not exist, and add:
+```env
+VITE_API_BASE_URL=http://localhost:8080/api
+```
 
-## Expanding the ESLint configuration
+### 3. Installation
+Navigate into this `frontend/` folder using your terminal and install the Node modules:
+```bash
+npm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 4. Run the Application
+Start the Vite development server by running:
+```bash
+npm run dev
+```
+
+The application will successfully compile and be accessible at `http://localhost:5173`.
