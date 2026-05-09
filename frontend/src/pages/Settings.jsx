@@ -97,7 +97,7 @@ const Settings = () => {
 
         {/* ── User Profile ───────────────────────────────────────── */}
         <Section
-          title="👤 User Profile"
+          title="User profile"
           subtitle="Your account details."
         >
           <div style={profileGridStyle}>
@@ -118,7 +118,7 @@ const Settings = () => {
 
         {/* ── Appearance ─────────────────────────────────────────── */}
         <Section
-          title="🎨 Appearance"
+          title="Appearance"
           subtitle="Customize the look of your dashboard."
         >
           <Toggle
@@ -131,7 +131,7 @@ const Settings = () => {
 
         {/* ── Security / Change Password ──────────────────────────── */}
         <Section
-          title="🔒 Security"
+          title="Security"
           subtitle="Manage your password and account security."
         >
           <form onSubmit={handlePasswordChange} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

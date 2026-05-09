@@ -58,7 +58,11 @@ const Dashboard = () => {
         <div className="portfolio-card">
           <div className="portfolio-header">
             <h3>Overview</h3>
-            <span className="portfolio-menu">⋮</span>
+            <button type="button" className="portfolio-menu-btn" aria-label="More options">
+              <span />
+              <span />
+              <span />
+            </button>
           </div>
           <p className="portfolio-value">{stats?.totalAssets || 0}</p>
           <p className="portfolio-subtitle">Total Assets in System</p>

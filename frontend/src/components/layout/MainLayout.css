@@ -17,6 +17,22 @@
   overflow: hidden;
 }
 
+/* Developer (single-page style): full-width sheet, no sidebar offset */
+.main-layout--developer {
+  padding: var(--spacing-md) var(--spacing-lg);
+  --navbar-height: 92px;
+}
+
+.main-content-wrapper--developer {
+  margin-left: 0;
+  border-radius: 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.main-layout--developer .main-content {
+  padding: var(--spacing-lg) var(--spacing-xl);
+}
+
 .main-content {
   flex: 1;
   margin-top: var(--navbar-height);

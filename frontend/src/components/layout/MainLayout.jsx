@@ -5,7 +5,8 @@ import './MainLayout.css';
 
 const MainLayout = ({ children, title }) => {
   const { user } = useAuth();
-  
+  const isDeveloper = user?.role === 'DEVELOPER';
+
   const displayUser = user ? {
     name: user.fullName || user.email || 'User',
     avatar: user.fullName ? user.fullName.substring(0, 2).toUpperCase() : 
@@ -16,10 +17,10 @@ const MainLayout = ({ children, title }) => {
   };
 
   return (
-    <div className="main-layout">
-      <Sidebar />
-      <div className="main-content-wrapper">
-        <TopNavbar title={title} user={displayUser} />
+    <div className={`main-layout${isDeveloper ? ' main-layout--developer' : ''}`}>
+      {!isDeveloper && <Sidebar />}
+      <div className={`main-content-wrapper${isDeveloper ? ' main-content-wrapper--developer' : ''}`}>
+        <TopNavbar title={title} user={displayUser} developerMode={isDeveloper} />
         <main className="main-content">
           {children}
         </main>

@@ -72,7 +72,7 @@ const LifecycleModal = ({ assetId, onClose }) => {
 
             {/* Allocation History */}
             <h3 style={{ color: '#c4b5fd', marginTop: '24px', marginBottom: '12px' }}>
-              📦 Allocation History ({lifecycle.allocationHistory?.length || 0} events)
+              Allocation history ({lifecycle.allocationHistory?.length || 0} events)
             </h3>
             {lifecycle.allocationHistory?.length === 0 && (
               <p style={{ color: '#aaa' }}>No allocation events recorded.</p>
@@ -91,10 +91,10 @@ const LifecycleModal = ({ assetId, onClose }) => {
                     <p style={eventDetailStyle}>← From: <strong>{event.assignedFromFullName}</strong></p>
                   )}
                   {event.assignedByFullName && (
-                    <p style={eventDetailStyle}>👤 By: <strong>{event.assignedByFullName}</strong></p>
+                    <p style={eventDetailStyle}>By: <strong>{event.assignedByFullName}</strong></p>
                   )}
                   {event.returnedAt && (
-                    <p style={eventDetailStyle}>🔄 Returned At: {formatDate(event.returnedAt)}</p>
+                    <p style={eventDetailStyle}>Returned at: {formatDate(event.returnedAt)}</p>
                   )}
                   {event.notes && (
                     <p style={{ ...eventDetailStyle, fontStyle: 'italic', color: '#94a3b8' }}>

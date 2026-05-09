@@ -218,6 +218,7 @@ const AssetDetail = () => {
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const canAssign = user?.role === 'ADMIN' || user?.role === 'MANAGER';
+  const assetListPath = user?.role === 'DEVELOPER' ? '/my-assets' : '/assets';
 
   const fetchAll = async () => {
     try {
@@ -261,8 +262,8 @@ const AssetDetail = () => {
       <div className="ad-error">
         <div className="ad-error-icon" aria-hidden />
         <p>{error}</p>
-        <button className="ad-back-btn" onClick={() => navigate('/assets')}>
-          ← Back to Assets
+        <button className="ad-back-btn" onClick={() => navigate(assetListPath)}>
+          ← {user?.role === 'DEVELOPER' ? 'Back to My Assets' : 'Back to Assets'}
         </button>
       </div>
     );
@@ -274,8 +275,8 @@ const AssetDetail = () => {
 
   return (
     <div className="ad-page">
-      <button id="back-to-assets" className="ad-breadcrumb-btn" onClick={() => navigate('/assets')}>
-        ← All Assets
+      <button id="back-to-assets" className="ad-breadcrumb-btn" onClick={() => navigate(assetListPath)}>
+        ← {user?.role === 'DEVELOPER' ? 'My Assets' : 'All Assets'}
       </button>
 
       <AssetHeader asset={asset} />

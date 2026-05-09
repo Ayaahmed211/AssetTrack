@@ -76,7 +76,7 @@ const SignUp = () => {
           setPendingApproval(true);
           setIsLoading(false);
         } else {
-          navigate('/assets');
+          navigate('/my-assets');
         }
       } else {
         setError(result.error || 'Signup failed. Please try again.');

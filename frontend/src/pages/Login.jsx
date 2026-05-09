@@ -40,7 +40,8 @@ const Login = () => {
       const result = await login(formData.email, formData.password);
 
       if (result.success) {
-        navigate('/dashboard');
+        const role = result.data?.user?.role;
+        navigate(role === 'DEVELOPER' ? '/my-assets' : '/dashboard');
       } else {
         setError(result.error || 'Login failed. Please try again.');
         setIsLoading(false);

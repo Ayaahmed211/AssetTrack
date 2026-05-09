@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import assetService from '../services/assetService';
 import ConditionReportForm from '../components/assets/ConditionReportForm';
+import AssetTypeChip from '../components/ui/AssetTypeChip';
 
 const MyAssets = () => {
   const navigate = useNavigate();
@@ -105,12 +106,6 @@ const MyAssets = () => {
     return { color: '#22c55e' };
   };
 
-  const getTypeIcon = (type) => {
-    if (type === 'LAPTOP') return '💻';
-    if (type === 'MONITOR') return '🖥️';
-    return '🔌';
-  };
-
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
@@ -157,7 +152,17 @@ const MyAssets = () => {
               color: 'var(--color-text-primary)', fontSize: '0.875rem', outline: 'none'
             }}
           />
-          <span style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
+          <span
+            style={{
+              position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)',
+              display: 'flex', color: 'var(--color-text-light)',
+            }}
+            aria-hidden
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
         </div>
       </div>
 
@@ -189,7 +194,7 @@ const MyAssets = () => {
               textAlign: 'center', padding: '3rem', background: 'var(--color-table-header-bg)',
               borderRadius: '1rem', border: '1px solid var(--color-table-border)'
             }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem', lineHeight: 1 }} aria-hidden>📦</div>
+              <div className="ui-empty-graphic" />
               <h3 style={{ color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>
                 {searchQuery ? 'No matching assets' : 'No assets assigned'}
               </h3>
@@ -212,11 +217,7 @@ const MyAssets = () => {
                   {/* Asset Header */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div style={{
-                        width: '44px', height: '44px', borderRadius: '0.75rem',
-                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem'
-                      }} aria-hidden>{getTypeIcon(asset.type)}</div>
+                      <AssetTypeChip type={asset.type} size="md" />
                       <div>
                         <h4 style={{ color: 'var(--color-text-primary)', margin: 0, fontWeight: 600, fontSize: '0.95rem' }}>
                           {asset.brand} {asset.model}
@@ -292,7 +293,7 @@ const MyAssets = () => {
               textAlign: 'center', padding: '3rem', background: 'var(--color-table-header-bg)',
               borderRadius: '1rem', border: '1px solid var(--color-table-border)'
             }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem', lineHeight: 1 }} aria-hidden>📋</div>
+              <div className="ui-empty-graphic" />
               <h3 style={{ color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>
                 {searchQuery ? 'No matching reports' : 'No reports filed yet'}
               </h3>

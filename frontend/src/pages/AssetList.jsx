@@ -60,9 +60,9 @@ const FilterBar = ({ typeFilter, statusFilter, onTypeChange, onStatusChange, onR
         onChange={(e) => onTypeChange(e.target.value)}
       >
         <option value="">All Types</option>
-        <option value="LAPTOP">💻 Laptop</option>
-        <option value="MONITOR">🖥️ Monitor</option>
-        <option value="ACCESSORY">🔌 Accessory</option>
+        <option value="LAPTOP">Laptop</option>
+        <option value="MONITOR">Monitor</option>
+        <option value="ACCESSORY">Accessory</option>
       </select>
     </div>
 
@@ -94,7 +94,7 @@ const AssetTable = ({ assets, onViewDetail }) => {
   if (assets.length === 0) {
     return (
       <div className="al-empty">
-        <div className="al-empty-icon" aria-hidden>📦</div>
+        <div className="al-empty-icon" aria-hidden />
         <h3>No assets found</h3>
         <p>Try adjusting your search or filters.</p>
       </div>

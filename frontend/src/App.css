@@ -168,9 +168,11 @@
 .asset-card.purple {
   background: var(--color-card-purple);
 }
+
 .asset-card.green {
   background: var(--color-card-green);
 }
+
 .asset-card.yellow {
   background: var(--color-card-yellow);
 }
@@ -321,6 +323,7 @@
 }
 
 @media (max-width: 1100px) {
+
   .overview-top,
   .market-grid {
     grid-template-columns: 1fr;
