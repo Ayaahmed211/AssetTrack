@@ -31,7 +31,13 @@
 }
 @keyframes ad-spin { to { transform: rotate(360deg); } }
 
-.ad-error-icon { font-size: 2.5rem; }
+.ad-error-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(239, 68, 68, 0.35);
+  background: radial-gradient(circle at 35% 35%, rgba(239, 68, 68, 0.25), transparent 55%);
+}
 .ad-error p { color: var(--color-danger); font-weight: var(--font-weight-medium); }
 
 .ad-back-btn,
@@ -80,8 +86,6 @@
   justify-content: center;
   flex-shrink: 0;
 }
-.ad-type-icon { font-size: 2rem; }
-
 .ad-asset-title {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
@@ -138,7 +142,21 @@
   border-color: rgba(245, 158, 11, 0.3);
   color: #92400e;
 }
-.ad-alert-icon { font-size: 1.5rem; flex-shrink: 0; }
+.ad-alert-marker {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+.ad-alert-marker--danger {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+.ad-alert-marker--warn {
+  background: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
 .ad-warranty-alert strong { display: block; font-weight: var(--font-weight-semibold); margin-bottom: 2px; }
 .ad-warranty-alert p { margin: 0; font-size: var(--font-size-sm); opacity: 0.85; }
 
@@ -271,7 +289,13 @@
   padding: var(--spacing-xl) var(--spacing-md);
   text-align: center;
 }
-.ad-unassigned-icon { font-size: 2rem; }
+.ad-unassigned-marker {
+  width: 40px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px dashed #cbd5e1;
+  background: #f8fafc;
+}
 .ad-unassigned p {
   margin: 0;
   font-size: var(--font-size-sm);
@@ -411,7 +435,20 @@
   padding: var(--spacing-xl);
   text-align: center;
 }
-.ad-empty-section span { font-size: 2rem; }
+.ad-empty-marker {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.ad-empty-marker--muted {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+.ad-empty-marker--success {
+  background: #ecfdf3;
+  border: 1px solid #bbf7d0;
+}
 .ad-empty-section p {
   margin: 0;
   font-size: var(--font-size-sm);

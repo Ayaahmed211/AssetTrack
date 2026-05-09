@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import assetService from '../services/assetService';
 import { useAuth } from '../context/AuthContext';
 import StatusBadge from '../components/ui/StatusBadge';
+import ModalShell from '../components/ui/ModalShell';
+import Pagination from '../components/ui/Pagination';
 import './AssetList.css';
 
 // ── Helper maps ────────────────────────────────────────────────────────────
@@ -25,7 +27,12 @@ const WARRANTY_VARIANT = {
 
 const SearchInput = ({ value, onChange }) => (
   <div className="al-search-wrapper">
-    <span className="al-search-icon">🔍</span>
+    <span className="al-search-icon" aria-hidden>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
+      </svg>
+    </span>
     <input
       id="asset-search"
       type="text"
@@ -35,8 +42,8 @@ const SearchInput = ({ value, onChange }) => (
       onChange={(e) => onChange(e.target.value)}
     />
     {value && (
-      <button className="al-search-clear" onClick={() => onChange('')} title="Clear">
-        ✕
+      <button type="button" className="al-search-clear" onClick={() => onChange('')} title="Clear">
+        <span aria-hidden>&times;</span>
       </button>
     )}
   </div>
@@ -76,8 +83,8 @@ const FilterBar = ({ typeFilter, statusFilter, onTypeChange, onStatusChange, onR
     </div>
 
     {(typeFilter || statusFilter) && (
-      <button className="al-filter-reset" onClick={onReset}>
-        ✕ Reset Filters
+      <button type="button" className="al-filter-reset" onClick={onReset}>
+        Reset filters
       </button>
     )}
   </div>
@@ -87,7 +94,7 @@ const AssetTable = ({ assets, onViewDetail }) => {
   if (assets.length === 0) {
     return (
       <div className="al-empty">
-        <div className="al-empty-icon">📦</div>
+        <div className="al-empty-icon" aria-hidden>📦</div>
         <h3>No assets found</h3>
         <p>Try adjusting your search or filters.</p>
       </div>
@@ -118,7 +125,7 @@ const AssetTable = ({ assets, onViewDetail }) => {
             >
               <td>
                 <div className="al-asset-name-cell">
-                  <span className="al-type-icon">
+                  <span className="al-type-icon" aria-hidden>
                     {TYPE_ICONS[asset.type] || '📦'}
                   </span>
                   <div>
@@ -162,7 +169,7 @@ const AssetTable = ({ assets, onViewDetail }) => {
                     onViewDetail(asset.id);
                   }}
                 >
-                  View →
+                  View
                 </button>
               </td>
             </tr>
@@ -211,57 +218,54 @@ const CreateAssetModal = ({ isOpen, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="create-modal-overlay" onClick={onClose}>
-      <div className="create-modal" onClick={e => e.stopPropagation()}>
-        <h3>Add New Asset</h3>
-        <form onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Asset Type</label>
-              <select name="type" className="form-select" value={formData.type} onChange={handleChange} required>
-                <option value="LAPTOP">Laptop</option>
-                <option value="MONITOR">Monitor</option>
-                <option value="ACCESSORY">Accessory</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Serial Number</label>
-              <input type="text" name="serialNumber" className="form-input" value={formData.serialNumber} onChange={handleChange} required />
-            </div>
+    <ModalShell isOpen={isOpen} onClose={onClose} title="Add New Asset" maxWidth="500px">
+      <form onSubmit={handleSubmit}>
+        <div className="form-row">
+          <div className="modal-form-group" style={{ flex: 1 }}>
+            <label>Asset Type</label>
+            <select name="type" className="modal-select" value={formData.type} onChange={handleChange} required>
+              <option value="LAPTOP">Laptop</option>
+              <option value="MONITOR">Monitor</option>
+              <option value="ACCESSORY">Accessory</option>
+            </select>
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Brand</label>
-              <input type="text" name="brand" className="form-input" value={formData.brand} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label>Model</label>
-              <input type="text" name="model" className="form-input" value={formData.model} onChange={handleChange} required />
-            </div>
+          <div className="modal-form-group" style={{ flex: 1 }}>
+            <label>Serial Number</label>
+            <input type="text" name="serialNumber" className="modal-input" value={formData.serialNumber} onChange={handleChange} required />
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Purchase Date</label>
-              <input type="date" name="purchaseDate" className="form-input" value={formData.purchaseDate} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label>Warranty Expiry</label>
-              <input type="date" name="warrantyExpirationDate" className="form-input" value={formData.warrantyExpirationDate} onChange={handleChange} required />
-            </div>
+        </div>
+        <div className="form-row">
+          <div className="modal-form-group" style={{ flex: 1 }}>
+            <label>Brand</label>
+            <input type="text" name="brand" className="modal-input" value={formData.brand} onChange={handleChange} required />
           </div>
-          <div className="form-group">
-            <label>Notes (Optional)</label>
-            <textarea name="notes" className="form-textarea" value={formData.notes} onChange={handleChange} placeholder="Any additional details..." />
+          <div className="modal-form-group" style={{ flex: 1 }}>
+            <label>Model</label>
+            <input type="text" name="model" className="modal-input" value={formData.model} onChange={handleChange} required />
           </div>
-          <div className="create-modal-footer">
-            <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn-submit" disabled={loading}>
-              {loading ? 'Saving...' : 'Create Asset'}
-            </button>
+        </div>
+        <div className="form-row">
+          <div className="modal-form-group" style={{ flex: 1 }}>
+            <label>Purchase Date</label>
+            <input type="date" name="purchaseDate" className="modal-input" value={formData.purchaseDate} onChange={handleChange} required />
           </div>
-        </form>
-      </div>
-    </div>
+          <div className="modal-form-group" style={{ flex: 1 }}>
+            <label>Warranty Expiry</label>
+            <input type="date" name="warrantyExpirationDate" className="modal-input" value={formData.warrantyExpirationDate} onChange={handleChange} required />
+          </div>
+        </div>
+        <div className="modal-form-group">
+          <label>Notes (Optional)</label>
+          <textarea name="notes" className="modal-textarea" value={formData.notes} onChange={handleChange} placeholder="Any additional details..." />
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="modal-btn-cancel" onClick={onClose}>Cancel</button>
+          <button type="submit" className="modal-btn-submit" disabled={loading}>
+            {loading ? 'Saving...' : 'Create Asset'}
+          </button>
+        </div>
+      </form>
+    </ModalShell>
   );
 };
 
@@ -279,6 +283,15 @@ const AssetList = () => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 4;
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, typeFilter, statusFilter]);
 
   // Modal State
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -344,7 +357,7 @@ const AssetList = () => {
   if (error) {
     return (
       <div className="al-error">
-        <div className="al-error-icon">⚠️</div>
+        <div className="al-error-icon" aria-hidden />
         <p>{error}</p>
         <button className="al-retry-btn" onClick={() => window.location.reload()}>
           Retry
@@ -405,7 +418,17 @@ const AssetList = () => {
       </div>
 
       {/* ── Table ── */}
-      <AssetTable assets={filtered} onViewDetail={handleViewDetail} />
+      <AssetTable 
+        assets={filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)} 
+        onViewDetail={handleViewDetail} 
+      />
+
+      {/* ── Pagination ── */}
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={Math.ceil(filtered.length / ITEMS_PER_PAGE)} 
+        onPageChange={setCurrentPage} 
+      />
 
       {/* ── Create Asset Modal ── */}
       <CreateAssetModal 

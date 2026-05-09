@@ -91,8 +91,8 @@ const MyAssets = () => {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
         <div style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem', animation: 'spin 1s linear infinite' }}>⟳</div>
-          <p>Loading your assets...</p>
+          <div className="ui-spinner" style={{ margin: '0 auto 1rem' }} />
+          <p>Loading your assets…</p>
         </div>
       </div>
     );
@@ -149,7 +149,7 @@ const MyAssets = () => {
               textAlign: 'center', padding: '3rem', background: 'rgba(255,255,255,0.03)',
               borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.08)'
             }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📦</div>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem', lineHeight: 1 }} aria-hidden>📦</div>
               <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>No assets assigned</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                 When a manager assigns equipment to you, it will appear here.
@@ -173,7 +173,7 @@ const MyAssets = () => {
                         width: '44px', height: '44px', borderRadius: '0.75rem',
                         background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem'
-                      }}>{getTypeIcon(asset.type)}</div>
+                      }} aria-hidden>{getTypeIcon(asset.type)}</div>
                       <div>
                         <h4 style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 600, fontSize: '0.95rem' }}>
                           {asset.brand} {asset.model}
@@ -200,7 +200,11 @@ const MyAssets = () => {
                     <div style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '0.4rem' }}>
                       <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', margin: 0 }}>Warranty</p>
                       <p style={{ fontSize: '0.85rem', margin: '0.15rem 0 0 0', fontWeight: 500, ...getWarrantyStyle(asset.warrantyStatus) }}>
-                        {asset.warrantyStatus === 'EXPIRED' ? '⚠️ Expired' : asset.warrantyStatus === 'EXPIRING_SOON' ? '⏰ Expiring Soon' : '✅ Valid'}
+                        {asset.warrantyStatus === 'EXPIRED'
+                          ? 'Expired'
+                          : asset.warrantyStatus === 'EXPIRING_SOON'
+                          ? 'Expiring soon'
+                          : 'Valid'}
                       </p>
                     </div>
                   </div>
@@ -216,7 +220,7 @@ const MyAssets = () => {
                     onMouseEnter={e => e.currentTarget.style.background = 'rgba(245,158,11,0.2)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'rgba(245,158,11,0.1)'}
                   >
-                    🐛 Report an Issue
+                    Report an issue
                   </button>
                 </div>
               ))}
@@ -233,7 +237,7 @@ const MyAssets = () => {
               textAlign: 'center', padding: '3rem', background: 'rgba(255,255,255,0.03)',
               borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.08)'
             }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📋</div>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem', lineHeight: 1 }} aria-hidden>📋</div>
               <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>No reports filed yet</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                 Go to "My Equipment" and click "Report an Issue" on any asset.
@@ -325,10 +329,10 @@ const MyAssets = () => {
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
                   {[
-                    { value: 'GOOD', label: '✅ Good', desc: 'Working perfectly' },
-                    { value: 'FAIR', label: '⚡ Fair', desc: 'Minor issues' },
-                    { value: 'DAMAGED', label: '🔴 Damaged', desc: 'Needs attention' },
-                    { value: 'UNDER_REPAIR', label: '🔧 Under Repair', desc: 'Being fixed' },
+                    { value: 'GOOD', label: 'Good', desc: 'Working as expected' },
+                    { value: 'FAIR', label: 'Fair', desc: 'Minor issues' },
+                    { value: 'DAMAGED', label: 'Damaged', desc: 'Needs attention' },
+                    { value: 'UNDER_REPAIR', label: 'Under repair', desc: 'Being fixed' },
                   ].map(opt => (
                     <label key={opt.value} style={{
                       display: 'flex', flexDirection: 'column', padding: '0.65rem',

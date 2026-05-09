@@ -99,8 +99,10 @@ const SignUp = () => {
                 width: '64px', height: '64px', borderRadius: '50%',
                 background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '2rem', margin: '0 auto 1.5rem auto'
-              }}>⏳</div>
+                margin: '0 auto 1.5rem auto'
+              }}>
+                <div className="ui-spinner" style={{ borderColor: 'rgba(255,255,255,0.35)', borderTopColor: '#fff' }} />
+              </div>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: '1.6' }}>
                 Your account has been created as a <strong style={{ color: 'var(--text-primary)' }}>Developer</strong>.
                 Your request for <strong style={{ color: '#f59e0b' }}>Manager</strong> access has been sent to an Admin for approval.
@@ -199,7 +201,11 @@ const SignUp = () => {
                     checked={formData.requestedRole === 'DEVELOPER'}
                     onChange={handleChange} style={{ display: 'none' }}
                   />
-                  <span style={{ fontSize: '1.5rem', marginBottom: '0.35rem' }}>👨‍💻</span>
+                  <span style={{
+                    fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.12em',
+                    padding: '5px 9px', borderRadius: '6px', marginBottom: '0.35rem',
+                    background: 'rgba(99,102,241,0.18)', color: '#6366f1'
+                  }}>DEV</span>
                   <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>Developer</span>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem', textAlign: 'center' }}>Instant access</span>
                 </label>
@@ -214,14 +220,18 @@ const SignUp = () => {
                     checked={formData.requestedRole === 'MANAGER'}
                     onChange={handleChange} style={{ display: 'none' }}
                   />
-                  <span style={{ fontSize: '1.5rem', marginBottom: '0.35rem' }}>🏢</span>
+                  <span style={{
+                    fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.12em',
+                    padding: '5px 9px', borderRadius: '6px', marginBottom: '0.35rem',
+                    background: 'rgba(245,158,11,0.18)', color: '#d97706'
+                  }}>MGR</span>
                   <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>Manager</span>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem', textAlign: 'center' }}>Requires approval</span>
                 </label>
               </div>
               {formData.requestedRole === 'MANAGER' && (
-                <p style={{ fontSize: '0.78rem', color: '#f59e0b', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  ⚠️ Manager access must be approved by an Admin before it activates.
+                <p style={{ fontSize: '0.78rem', color: '#f59e0b', marginTop: '0.5rem' }}>
+                  Manager access must be approved by an Admin before it activates.
                 </p>
               )}
             </div>

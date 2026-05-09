@@ -28,11 +28,24 @@ const Dashboard = () => {
   }, []);
 
   if (loading) {
-    return <div className="overview-content">Loading dashboard...</div>;
+    return (
+      <div className="overview-content">
+        <div className="dash-loading" role="status" aria-busy="true">
+          <div className="dash-spinner" />
+          <p>Loading dashboard…</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="overview-content" style={{ color: 'red' }}>{error}</div>;
+    return (
+      <div className="overview-content">
+        <div className="dash-error" role="alert">
+          <p>{error}</p>
+        </div>
+      </div>
+    );
   }
 
   // Transform data for charts
@@ -50,29 +63,39 @@ const Dashboard = () => {
         <div className="portfolio-card">
           <div className="portfolio-header">
             <h3>Overview</h3>
-            <span className="portfolio-menu">⋮</span>
+            <button type="button" className="portfolio-menu-btn" aria-label="More options">
+              <span />
+              <span />
+              <span />
+            </button>
           </div>
-          <p className="portfolio-value">{stats?.totalAssets || 0}</p>
-          <p className="portfolio-subtitle">Total Assets in System</p>
-          <div style={{ marginTop: '20px' }}>
+          <p className="portfolio-value">{stats?.totalAssets ?? 0}</p>
+          <p className="portfolio-subtitle">Total assets in system</p>
+          <div className="portfolio-chart-wrap">
             <UsageStatsChart data={statusChartData} />
           </div>
         </div>
 
         <div className="asset-cards">
           <article className="asset-card purple">
-            <h4>Allocations</h4>
-            <p>Total Events: {stats?.totalAllocations || 0}</p>
+            <div className="asset-card-body">
+              <h4>Allocations</h4>
+              <p>Total events: {stats?.totalAllocations ?? 0}</p>
+            </div>
             <StatusBadge status="ACTIVE" variant="info" size="small" />
           </article>
           <article className="asset-card green">
-            <h4>Warranties</h4>
-            <p>Valid: {stats?.validWarranties || 0}</p>
+            <div className="asset-card-body">
+              <h4>Warranties</h4>
+              <p>Valid: {stats?.validWarranties ?? 0}</p>
+            </div>
             <StatusBadge status="OK" variant="success" size="small" />
           </article>
           <article className="asset-card yellow">
-            <h4>Reports</h4>
-            <p>Condition Reports: {stats?.totalConditionReports || 0}</p>
+            <div className="asset-card-body">
+              <h4>Reports</h4>
+              <p>Condition reports: {stats?.totalConditionReports ?? 0}</p>
+            </div>
             <StatusBadge status="NOTE" variant="warning" size="small" />
           </article>
         </div>
@@ -103,11 +126,15 @@ const Dashboard = () => {
           </div>
 
           <aside className="promo-card">
-            <h4>System Health</h4>
-            <p>Users: {stats?.totalUsers || 0}</p>
-            <p>Active Assignments: {stats?.activeAssignments || 0}</p>
-            <p>Available Spares: {stats?.availableSpares || 0}</p>
-            <button onClick={() => navigate('/reports')}>View Reports</button>
+            <h4>System health</h4>
+            <ul className="promo-metrics">
+              <li><span>Users</span><strong>{stats?.totalUsers ?? 0}</strong></li>
+              <li><span>Active assignments</span><strong>{stats?.activeAssignments ?? 0}</strong></li>
+              <li><span>Available spare units</span><strong>{stats?.availableSpares ?? 0}</strong></li>
+            </ul>
+            <button type="button" className="promo-card-btn" onClick={() => navigate('/reports')}>
+              View reports
+            </button>
           </aside>
         </div>
       </section>

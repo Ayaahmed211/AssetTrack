@@ -5,11 +5,10 @@ import userService from '../services/userService';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import StatusBadge from '../components/ui/StatusBadge';
+import AssetTypeChip from '../components/ui/AssetTypeChip';
 import './AssetDetail.css';
 
 // ── Helper maps ────────────────────────────────────────────────────────────
-const TYPE_ICONS = { LAPTOP: '💻', MONITOR: '🖥️', ACCESSORY: '🔌' };
-
 const STATUS_VARIANT = {
   AVAILABLE: 'success',
   ASSIGNED: 'info',
@@ -47,7 +46,7 @@ const WarrantyAlert = ({ warrantyStatus, daysUntilWarrantyExpiry }) => {
 
   return (
     <div className={`ad-warranty-alert ${isExpired ? 'ad-alert-danger' : 'ad-alert-warning'}`}>
-      <span className="ad-alert-icon">{isExpired ? '🚨' : '⏰'}</span>
+      <span className={`ad-alert-marker ${isExpired ? 'ad-alert-marker--danger' : 'ad-alert-marker--warn'}`} aria-hidden />
       <div>
         <strong>{isExpired ? 'Warranty Expired' : 'Warranty Expiring Soon'}</strong>
         <p>
@@ -64,7 +63,7 @@ const AllocationHistoryTable = ({ history, asset }) => {
   if (!history || history.length === 0) {
     return (
       <div className="ad-empty-section">
-        <span>📋</span>
+        <span className="ad-empty-marker ad-empty-marker--muted" aria-hidden />
         <p>No allocation history for this asset yet.</p>
       </div>
     );
@@ -127,7 +126,7 @@ const ConditionReportsList = ({ reports }) => {
   if (!reports || reports.length === 0) {
     return (
       <div className="ad-empty-section">
-        <span>✅</span>
+        <span className="ad-empty-marker ad-empty-marker--success" aria-hidden />
         <p>No condition reports filed for this asset.</p>
       </div>
     );
@@ -361,7 +360,7 @@ const AssetDetail = () => {
   if (error) {
     return (
       <div className="ad-error">
-        <div className="ad-error-icon">⚠️</div>
+        <div className="ad-error-icon" aria-hidden />
         <p>{error}</p>
         <button className="ad-back-btn" onClick={() => navigate('/assets')}>
           ← Back to Assets
@@ -386,7 +385,7 @@ const AssetDetail = () => {
       <div className="ad-header-card">
         <div className="ad-header-left">
           <div className="ad-type-badge">
-            <span className="ad-type-icon">{TYPE_ICONS[asset.type] || '📦'}</span>
+            <AssetTypeChip type={asset.type} size="md" />
           </div>
           <div>
             <h1 className="ad-asset-title">{asset.brand} {asset.model}</h1>
@@ -510,7 +509,7 @@ const AssetDetail = () => {
             </div>
           ) : (
             <div className="ad-unassigned">
-              <span className="ad-unassigned-icon">📭</span>
+              <span className="ad-unassigned-marker" aria-hidden />
               <p>This asset is not currently assigned to anyone.</p>
               {asset.status === 'AVAILABLE' && (
                 <span className="ad-available-label">Available for assignment</span>

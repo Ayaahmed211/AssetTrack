@@ -1,0 +1,43 @@
+.asset-type-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 8px;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+
+.asset-type-chip--md {
+  min-width: 36px;
+  height: 36px;
+  font-size: 11px;
+  padding: 0 6px;
+}
+
+.asset-type-chip--sm {
+  min-width: 30px;
+  height: 30px;
+  font-size: 10px;
+  padding: 0 4px;
+}
+
+.asset-type-chip--laptop {
+  background: #e0e7ff;
+  color: #3730a3;
+  border-color: #c7d2fe;
+}
+
+.asset-type-chip--monitor {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #bfdbfe;
+}
+
+.asset-type-chip--accessory {
+  background: #f3e8ff;
+  color: #6b21a8;
+  border-color: #e9d5ff;
+}

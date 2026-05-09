@@ -5,6 +5,7 @@ import authService from '../services/authService';
 import PermissionsMatrix from '../components/PermissionsMatrix';
 import EditRoleModal from '../components/EditRoleModal';
 import InviteUserModal from '../components/InviteUserModal';
+import Pagination from '../components/ui/Pagination';
 
 const Users = () => {
   const { user: currentUser } = useAuth();
@@ -16,9 +17,18 @@ const Users = () => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 4;
+
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  // Reset pagination when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
 
   const fetchUsers = async () => {
     try {
@@ -85,6 +95,12 @@ const Users = () => {
     return user.role === filter;
   });
 
+  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   const pendingCount = users.filter(u => u.requestedRole != null).length;
 
   const getRoleBadgeStyle = (role) => {
@@ -100,7 +116,7 @@ const Users = () => {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
         <div style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem', animation: 'spin 1s linear infinite' }}>⟳</div>
+          <div className="ui-spinner" style={{ margin: '0 auto 1rem' }} />
           <p>Loading users...</p>
         </div>
       </div>
@@ -154,7 +170,13 @@ const Users = () => {
           padding: '1rem 1.25rem', marginBottom: '1.5rem',
           display: 'flex', alignItems: 'center', gap: '0.75rem'
         }}>
-          <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+          <span
+            style={{
+              width: '10px', height: '10px', borderRadius: '50%', flexShrink: 0,
+              background: '#f59e0b', boxShadow: '0 0 0 3px rgba(245,158,11,0.25)'
+            }}
+            aria-hidden
+          />
           <div>
             <p style={{ color: '#f59e0b', fontWeight: 600, fontSize: '0.9rem', margin: 0 }}>
               {pendingCount} user{pendingCount !== 1 ? 's' : ''} waiting for Admin approval
@@ -218,14 +240,14 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.length === 0 ? (
+            {paginatedUsers.length === 0 ? (
               <tr>
                 <td colSpan={currentUser?.role === 'ADMIN' ? "5" : "4"} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
                   No users found for this filter.
                 </td>
               </tr>
             ) : (
-              filteredUsers.map(user => (
+              paginatedUsers.map(user => (
                 <tr key={user.id} style={{
                   borderBottom: '1px solid rgba(255,255,255,0.05)',
                   transition: 'background 0.15s',
@@ -306,7 +328,7 @@ const Users = () => {
                               opacity: actionLoading === user.id ? 0.5 : 1
                             }}
                           >
-                            {actionLoading === user.id ? '...' : '✓ Approve'}
+                            {actionLoading === user.id ? '...' : 'Approve'}
                           </button>
                         )}
                         <button
@@ -342,6 +364,12 @@ const Users = () => {
           </tbody>
         </table>
       </div>
+
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        onPageChange={setCurrentPage} 
+      />
 
       {/* Modals & Matrix */}
       <PermissionsMatrix />
