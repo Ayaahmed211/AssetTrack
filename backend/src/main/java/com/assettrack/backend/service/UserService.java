@@ -7,6 +7,7 @@ import com.assettrack.backend.dto.UserDto;
 import com.assettrack.backend.exception.ResourceNotFoundException;
 import com.assettrack.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserDto> getAllUsers() {
         return userRepository.findAll()
@@ -89,5 +91,18 @@ public class UserService {
                 .enabled(user.isEnabled())
                 .requestedRole(user.getRequestedRole())
                 .build();
+    }
+
+    @Transactional
+    public void changePassword(Long id, String currentPassword, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Incorrect current password");
+        }
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

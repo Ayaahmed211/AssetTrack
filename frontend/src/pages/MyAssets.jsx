@@ -309,7 +309,7 @@ const MyAssets = () => {
           onClick={() => setShowReportForm(false)}
         >
           <div style={{
-            background: 'var(--bg-card, #1e1e2e)', borderRadius: '1rem', padding: '2rem',
+            background: 'var(--color-card)', borderRadius: '1rem', padding: '2rem',
             width: '90%', maxWidth: '480px', border: '1px solid rgba(255,255,255,0.1)'
           }}
             onClick={e => e.stopPropagation()}

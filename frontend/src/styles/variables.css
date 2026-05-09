@@ -77,3 +77,16 @@
   --sidebar-width: 220px;
   --navbar-height: 84px;
 }
+
+[data-theme="dark"] {
+  --color-background: #0f1115;
+  --color-card: #1a1d26;
+  --color-card-blue: #1e2633;
+  --color-card-purple: #25213b;
+  --color-card-green: #1a2a22;
+  --color-card-yellow: #2a261a;
+  --color-text-primary: #f3f4f6;
+  --color-text-secondary: #9ca3af;
+  --color-text-light: #6b7280;
+  --color-border: #2d3340;
+}

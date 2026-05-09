@@ -12,6 +12,7 @@ import AssetList from './pages/AssetList';
 import AssetDetail from './pages/AssetDetail';
 import Search from './pages/Search';
 import Notifications from './pages/Notifications';
+import Settings from './pages/Settings';
 import './App.css';
 
 function App() {
@@ -97,6 +98,16 @@ function App() {
               <ProtectedRoute>
                 <MainLayout title="Asset Detail">
                   <AssetDetail />
+                </MainLayout>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <MainLayout title="Settings">
+                  <Settings />
                 </MainLayout>
               </ProtectedRoute>
             } 

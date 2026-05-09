@@ -1,6 +1,7 @@
 package com.assettrack.backend.controller;
 
 import com.assettrack.backend.domain.Role;
+import com.assettrack.backend.dto.PasswordChangeRequest;
 import com.assettrack.backend.dto.UpdateRoleRequest;
 import com.assettrack.backend.dto.UserDto;
 import com.assettrack.backend.service.UserService;
@@ -61,5 +62,14 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> toggleUserStatus(@PathVariable Long id) {
         return ResponseEntity.ok(userService.toggleUserStatus(id));
+    }
+
+    @PutMapping("/{id}/password")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'DEVELOPER')")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable Long id,
+            @RequestBody PasswordChangeRequest request) {
+        userService.changePassword(id, request.getCurrentPassword(), request.getNewPassword());
+        return ResponseEntity.ok().build();
     }
 }

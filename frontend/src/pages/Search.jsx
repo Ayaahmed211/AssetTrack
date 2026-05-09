@@ -88,9 +88,9 @@ const Search = () => {
   return (
     <div>
       <div style={{ marginBottom: '0.85rem' }}>
-        <h2 style={{ margin: 0, color: '#0f172a', fontSize: '1.45rem' }}>Advanced Asset Search</h2>
+        <h2 style={{ margin: 0, color: '#0f172a', fontSize: '1.45rem' }}>Asset Search</h2>
         <p style={{ margin: '0.3rem 0 0 0', color: '#64748b', fontSize: '0.9rem' }}>
-          Search assets by serial, brand, model, status, type, assigned user ID, and warranty state.
+          Find hardware across the entire organization.
         </p>
       </div>
 
@@ -104,7 +104,7 @@ const Search = () => {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.7rem' }}>
         <span style={{ color: '#334155', fontSize: '0.85rem' }}>
-          {results.length} result{results.length !== 1 ? 's' : ''} {activeFilterCount ? `(filtered with ${activeFilterCount} field${activeFilterCount > 1 ? 's' : ''})` : ''}
+          {results.length} result{results.length !== 1 ? 's' : ''} found
         </span>
       </div>
 
