@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react';
 import userService from '../services/userService';
+import { useAuth } from '../context/AuthContext';
+import authService from '../services/authService';
+import PermissionsMatrix from '../components/PermissionsMatrix';
+import EditRoleModal from '../components/EditRoleModal';
+import InviteUserModal from '../components/InviteUserModal';
 
 const Users = () => {
+  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
   const [filter, setFilter] = useState('ALL');
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -45,6 +53,29 @@ const Users = () => {
       alert('Failed to toggle user status.');
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const handleUpdateRole = async (userId, newRole) => {
+    try {
+      setActionLoading(userId);
+      const updatedUser = await userService.updateUserRole(userId, newRole);
+      setUsers(prev => prev.map(u => u.id === userId ? updatedUser : u));
+      setEditingUser(null);
+    } catch (err) {
+      alert('Failed to update role.');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleInviteUser = async (userData) => {
+    try {
+      await authService.signup(userData);
+      fetchUsers(); // Refresh the list
+      setIsInviteModalOpen(false);
+    } catch (err) {
+      alert(err.message || 'Failed to invite user.');
     }
   };
 
@@ -105,10 +136,18 @@ const Users = () => {
             {users.length} total users • {pendingCount} pending approval{pendingCount !== 1 ? 's' : ''}
           </p>
         </div>
+        {currentUser?.role === 'ADMIN' && (
+          <button onClick={() => setIsInviteModalOpen(true)} style={{
+            padding: '0.5rem 1rem', background: '#6366f1', color: 'white',
+            border: 'none', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: 600
+          }}>
+            + Invite User
+          </button>
+        )}
       </div>
 
       {/* Pending Approvals Banner */}
-      {pendingCount > 0 && (
+      {currentUser?.role === 'ADMIN' && pendingCount > 0 && (
         <div style={{
           background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05))',
           border: '1px solid rgba(245,158,11,0.3)', borderRadius: '0.75rem',
@@ -118,7 +157,7 @@ const Users = () => {
           <span style={{ fontSize: '1.25rem' }}>⚠️</span>
           <div>
             <p style={{ color: '#f59e0b', fontWeight: 600, fontSize: '0.9rem', margin: 0 }}>
-              {pendingCount} user{pendingCount !== 1 ? 's' : ''} waiting for Manager approval
+              {pendingCount} user{pendingCount !== 1 ? 's' : ''} waiting for Admin approval
             </p>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '0.2rem 0 0 0' }}>
               Review and approve or reject their requests below.
@@ -164,18 +203,24 @@ const Users = () => {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-              {['Name', 'Email', 'Role', 'Status', 'Actions'].map(h => (
+              {['Name', 'Email', 'Role', 'Status'].map(h => (
                 <th key={h} style={{
                   padding: '0.75rem 1rem', textAlign: 'left', fontSize: '0.75rem',
                   fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em'
                 }}>{h}</th>
               ))}
+              {currentUser?.role === 'ADMIN' && (
+                <th style={{
+                  padding: '0.75rem 1rem', textAlign: 'left', fontSize: '0.75rem',
+                  fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em'
+                }}>Actions</th>
+              )}
             </tr>
           </thead>
           <tbody>
             {filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan="5" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
+                <td colSpan={currentUser?.role === 'ADMIN' ? "5" : "4"} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
                   No users found for this filter.
                 </td>
               </tr>
@@ -247,43 +292,72 @@ const Users = () => {
                   </td>
 
                   {/* Actions */}
-                  <td style={{ padding: '0.75rem 1rem' }}>
-                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                      {user.requestedRole && (
+                  {currentUser?.role === 'ADMIN' && (
+                    <td style={{ padding: '0.75rem 1rem' }}>
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                        {user.requestedRole && (
+                          <button
+                            onClick={() => handleApproveRole(user.id)}
+                            disabled={actionLoading === user.id}
+                            style={{
+                              padding: '0.35rem 0.75rem', borderRadius: '0.4rem',
+                              border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600,
+                              background: '#22c55e', color: 'white',
+                              opacity: actionLoading === user.id ? 0.5 : 1
+                            }}
+                          >
+                            {actionLoading === user.id ? '...' : '✓ Approve'}
+                          </button>
+                        )}
                         <button
-                          onClick={() => handleApproveRole(user.id)}
+                          onClick={() => setEditingUser(user)}
+                          style={{
+                            padding: '0.35rem 0.75rem', borderRadius: '0.4rem',
+                            border: '1px solid rgba(99,102,241,0.5)',
+                            cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500,
+                            background: 'rgba(99,102,241,0.1)', color: '#818cf8'
+                          }}
+                        >
+                          Edit Role
+                        </button>
+                        <button
+                          onClick={() => handleToggleStatus(user.id)}
                           disabled={actionLoading === user.id}
                           style={{
                             padding: '0.35rem 0.75rem', borderRadius: '0.4rem',
-                            border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600,
-                            background: '#22c55e', color: 'white',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500,
+                            background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)',
                             opacity: actionLoading === user.id ? 0.5 : 1
                           }}
                         >
-                          {actionLoading === user.id ? '...' : '✓ Approve'}
+                          {user.enabled ? 'Disable' : 'Enable'}
                         </button>
-                      )}
-                      <button
-                        onClick={() => handleToggleStatus(user.id)}
-                        disabled={actionLoading === user.id}
-                        style={{
-                          padding: '0.35rem 0.75rem', borderRadius: '0.4rem',
-                          border: '1px solid rgba(255,255,255,0.1)',
-                          cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500,
-                          background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)',
-                          opacity: actionLoading === user.id ? 0.5 : 1
-                        }}
-                      >
-                        {user.enabled ? 'Disable' : 'Enable'}
-                      </button>
-                    </div>
-                  </td>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Modals & Matrix */}
+      <PermissionsMatrix />
+      
+      <EditRoleModal 
+        isOpen={!!editingUser} 
+        user={editingUser} 
+        onClose={() => setEditingUser(null)} 
+        onSave={handleUpdateRole} 
+      />
+      
+      <InviteUserModal 
+        isOpen={isInviteModalOpen} 
+        onClose={() => setIsInviteModalOpen(false)} 
+        onInvite={handleInviteUser} 
+      />
 
       <style>{`
         @keyframes pulse {
