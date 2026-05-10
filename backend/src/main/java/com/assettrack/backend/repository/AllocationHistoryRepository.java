@@ -19,4 +19,7 @@ public interface AllocationHistoryRepository extends JpaRepository<AllocationHis
 
     // Paginated version of full history — used by GET /api/allocations/history?page=0&size=20
     Page<AllocationHistory> findAllByOrderByAssignedAtDesc(Pageable pageable);
+
+    /** Used when deleting an asset (avoid bidirectional cascade + Lombok @Data on entities). */
+    void deleteAllByAsset_Id(Long assetId);
 }

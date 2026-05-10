@@ -7,7 +7,9 @@ import com.assettrack.backend.dto.AssetRequest;
 import com.assettrack.backend.dto.AssetResponse;
 import com.assettrack.backend.dto.AssetStatusUpdateRequest;
 import com.assettrack.backend.exception.ResourceNotFoundException;
+import com.assettrack.backend.repository.AllocationHistoryRepository;
 import com.assettrack.backend.repository.AssetRepository;
+import com.assettrack.backend.repository.ConditionReportRepository;
 import com.assettrack.backend.repository.UserRepository;
 import com.assettrack.backend.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,8 @@ public class AssetService {
 
     private final AssetRepository assetRepository;
     private final UserRepository userRepository;
+    private final AllocationHistoryRepository allocationHistoryRepository;
+    private final ConditionReportRepository conditionReportRepository;
 
     // -------------------------------------------------------------------------
     // CRUD
@@ -150,13 +154,16 @@ public class AssetService {
     }
 
     /**
-     * Permanently delete an asset. Related allocation-history and condition-report
-     * rows are removed via {@code CascadeType.REMOVE} on the Asset entity graph.
+     * Permanently delete an asset and dependent rows. Child rows are removed explicitly
+     * (no bidirectional {@code OneToMany} on {@link Asset}) so Lombok {@code @Data}
+     * equals/hashCode on entities does not recurse asset ↔ history/report graphs.
      */
     @Transactional
     public void deleteAsset(Long id) {
-        Asset asset = findOrThrow(id);
-        assetRepository.delete(asset);
+        findOrThrow(id);
+        allocationHistoryRepository.deleteAllByAsset_Id(id);
+        conditionReportRepository.deleteAllByAsset_Id(id);
+        assetRepository.deleteById(id);
     }
 
     // -------------------------------------------------------------------------

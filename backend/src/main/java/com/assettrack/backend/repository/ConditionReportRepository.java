@@ -14,4 +14,7 @@ public interface ConditionReportRepository extends JpaRepository<ConditionReport
 
     // All condition reports filed by a specific user (newest first)
     List<ConditionReport> findByReportedByIdOrderByReportedAtDesc(Long userId);
+
+    /** Used when deleting an asset. */
+    void deleteAllByAsset_Id(Long assetId);
 }
