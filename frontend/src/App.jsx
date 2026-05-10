@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import {lazy} from "react";
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import MainLayout from './components/layout/MainLayout';
 import Login from './pages/Login';
@@ -14,7 +15,6 @@ const Search       = lazy(() => import('./pages/Search'));
 const Notifications = lazy(() => import('./pages/Notifications'));
 const Settings     = lazy(() => import('./pages/Settings'));
 import './App.css';
-import {lazy} from "react";
 
 function App() {
   return (
