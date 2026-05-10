@@ -40,6 +40,143 @@
 }
 .ad-error p { color: var(--color-danger); font-weight: var(--font-weight-medium); }
 
+/* Matches Settings “Back to My Assets” control (developer asset detail + error states) */
+.ad-back-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: var(--color-card, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  width: fit-content;
+  text-align: left;
+  font-family: inherit;
+}
+.ad-back-nav-btn:hover {
+  background: var(--color-table-header-bg, rgba(0, 0, 0, 0.03));
+  border-color: var(--color-border);
+}
+
+/* ── Admin: delete asset (matches pill / outline control styling) ── */
+.ad-delete-admin {
+  margin-top: var(--spacing-lg);
+  margin-bottom: 1.5rem;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-table-border);
+  background: var(--color-table-header-bg);
+}
+
+.ad-delete-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #b91c1c;
+  background: var(--color-card);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.ad-delete-trigger:hover {
+  background: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.55);
+  color: #991b1b;
+}
+
+.ad-delete-hint {
+  margin: 0.65rem 0 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  max-width: 520px;
+}
+
+.ad-delete-modal-lead {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  line-height: 1.45;
+}
+
+.ad-delete-modal-sn {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+.ad-delete-modal-copy {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.ad-delete-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.ad-delete-modal-cancel {
+  padding: 10px 18px;
+  background: transparent;
+  border: 1px solid var(--color-border, #e2e8f0);
+  color: var(--color-text-secondary);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ad-delete-modal-cancel:hover:not(:disabled) {
+  background: var(--color-table-header-bg);
+  color: var(--color-text-primary);
+}
+
+.ad-delete-modal-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ad-delete-modal-confirm {
+  padding: 10px 18px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.ad-delete-modal-confirm:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.ad-delete-modal-confirm:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
 .ad-back-btn,
 .ad-breadcrumb-btn {
   background: none;

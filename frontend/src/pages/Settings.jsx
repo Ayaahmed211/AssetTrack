@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import userService from '../services/userService';
 
@@ -52,7 +53,9 @@ const Toggle = ({ label, description, checked, onChange }) => (
 
 /* ── Main Settings Component ─────────────────────────────────────────── */
 const Settings = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
+  const isDeveloper = user?.role === 'DEVELOPER';
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem(SETTINGS_KEY);
     return saved ? JSON.parse(saved).darkMode : false;
@@ -94,6 +97,18 @@ const Settings = () => {
   return (
     <div className="overview-content">
       <div style={{ maxWidth: '680px', paddingBottom: '40px' }}>
+        {isDeveloper && (
+          <button
+            type="button"
+            onClick={() => navigate('/my-assets')}
+            style={backBtnStyle}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            Back to My Assets
+          </button>
+        )}
 
         {/* ── User Profile ───────────────────────────────────────── */}
         <Section
@@ -180,6 +195,22 @@ const Settings = () => {
 };
 
 /* ── Styles ─────────────────────────────────────────────────────────── */
+const backBtnStyle = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
+  marginBottom: '20px',
+  padding: '8px 14px',
+  fontSize: '0.875rem',
+  fontWeight: 600,
+  color: 'var(--color-text-primary)',
+  background: 'var(--color-card, #fff)',
+  border: '1px solid var(--color-border, #e5e7eb)',
+  borderRadius: '10px',
+  cursor: 'pointer',
+  transition: 'background 0.15s, border-color 0.15s',
+};
+
 const sectionStyle = {
   background: 'var(--color-card, #fff)',
   border: '1px solid var(--color-border, #e5e7eb)',

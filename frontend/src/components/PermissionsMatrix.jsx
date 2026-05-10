@@ -3,8 +3,8 @@ import React from 'react';
 const PermissionsMatrix = () => {
   const permissions = [
     { role: 'ADMIN', users: 'Full Access', assets: 'Full Access', reports: 'Full Access', settings: 'Full Access' },
-    { role: 'MANAGER', users: 'View Only', assets: 'Create/Edit/View', reports: 'Full Access', settings: 'Update Profile' },
-    { role: 'DEVELOPER', users: 'No Access', assets: 'My Assets Only', reports: 'No Access', settings: 'Update Profile' },
+    { role: 'MANAGER', users: 'View Only', assets: 'Create/Edit/View', reports: 'Full Access', settings: 'Full Access' },
+    { role: 'DEVELOPER', users: 'No Access', assets: 'My Assets Only', reports: 'No Access', settings: 'Full Access' },
   ];
 
   return (

@@ -150,7 +150,8 @@ public class AssetService {
     }
 
     /**
-     * Permanently delete an asset record.
+     * Permanently delete an asset. Related allocation-history and condition-report
+     * rows are removed via {@code CascadeType.REMOVE} on the Asset entity graph.
      */
     @Transactional
     public void deleteAsset(Long id) {

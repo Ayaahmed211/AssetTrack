@@ -79,6 +79,11 @@ const assetService = {
     const response = await api.post('/allocations/return', returnData);
     return response.data;
   },
+
+  // Permanently delete an asset (ADMIN only)
+  deleteAsset: async (id) => {
+    await api.delete(`/assets/${id}`);
+  },
 };
 
 export default assetService;

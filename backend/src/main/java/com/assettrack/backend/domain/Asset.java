@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import com.assettrack.backend.domain.User;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JPA entity representing a hardware asset (laptop, monitor, or accessory).
@@ -84,6 +82,18 @@ public class Asset {
     private User assignedTo;
     @Column(columnDefinition = "TEXT")
     private String notes;
+
+    /**
+     * Allocation and condition-report rows are removed when this asset is deleted
+     * ({@code CascadeType.REMOVE}).
+     */
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private List<AllocationHistory> allocationHistories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private List<ConditionReport> conditionReports = new ArrayList<>();
 
     /** Set automatically when the record is first persisted. */
     @Column(nullable = false, updatable = false)

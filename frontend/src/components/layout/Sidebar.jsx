@@ -14,7 +14,7 @@ const Sidebar = () => {
       { id: 'my-assets', label: 'My Assets', path: '/my-assets', roles: ['ADMIN', 'MANAGER', 'DEVELOPER'] },
       { id: 'assets', label: 'Assets', path: '/assets', roles: ['ADMIN', 'MANAGER'] },
       { id: 'reports', label: 'Reports', path: '/reports', roles: ['ADMIN', 'MANAGER'] },
-      { id: 'settings', label: 'Settings', path: '/settings', roles: ['ADMIN', 'MANAGER'] },
+      { id: 'settings', label: 'Settings', path: '/settings', roles: ['ADMIN', 'MANAGER', 'DEVELOPER'] },
       { id: 'users', label: 'Users', path: '/users', roles: ['ADMIN', 'MANAGER'] },
     ],
     []

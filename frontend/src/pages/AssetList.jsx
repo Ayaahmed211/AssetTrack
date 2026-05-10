@@ -90,7 +90,7 @@ const FilterBar = ({ typeFilter, statusFilter, onTypeChange, onStatusChange, onR
   </div>
 );
 
-const AssetTable = ({ assets, onViewDetail }) => {
+const AssetTable = ({ assets, onViewDetail, showDelete, onRequestDelete }) => {
   if (assets.length === 0) {
     return (
       <div className="al-empty">
@@ -112,7 +112,7 @@ const AssetTable = ({ assets, onViewDetail }) => {
             <th>Status</th>
             <th>Warranty</th>
             <th>Purchase Date</th>
-            <th></th>
+            <th className="al-actions-col" aria-label="Actions" />
           </tr>
         </thead>
         <tbody>
@@ -160,17 +160,33 @@ const AssetTable = ({ assets, onViewDetail }) => {
                     })
                   : '—'}
               </td>
-              <td>
-                <button
-                  id={`view-asset-${asset.id}`}
-                  className="al-view-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onViewDetail(asset.id);
-                  }}
-                >
-                  View
-                </button>
+              <td className="al-actions-cell">
+                <div className="al-actions-inner">
+                  <button
+                    type="button"
+                    id={`view-asset-${asset.id}`}
+                    className="al-view-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onViewDetail(asset.id);
+                    }}
+                  >
+                    View
+                  </button>
+                  {showDelete && (
+                    <button
+                      type="button"
+                      id={`delete-asset-${asset.id}`}
+                      className="al-delete-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRequestDelete(asset);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </td>
             </tr>
           ))}
@@ -295,7 +311,10 @@ const AssetList = () => {
 
   // Modal State
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteSubmitting, setDeleteSubmitting] = useState(false);
   const canManage = user?.role === 'ADMIN' || user?.role === 'MANAGER';
+  const isAdmin = user?.role === 'ADMIN';
 
   // ── Fetch all assets
   const fetchAssets = async () => {
@@ -343,6 +362,25 @@ const AssetList = () => {
   // ── Handlers
   const handleViewDetail = (id) => navigate(`/assets/${id}`);
   const handleResetFilters = () => { setTypeFilter(''); setStatusFilter(''); };
+
+  const handleConfirmDeleteFromList = async () => {
+    if (!deleteTarget) return;
+    try {
+      setDeleteSubmitting(true);
+      await assetService.deleteAsset(deleteTarget.id);
+      setDeleteTarget(null);
+      await fetchAssets();
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data ||
+        err.message ||
+        'Could not delete this asset.';
+      alert(typeof msg === 'string' ? msg : 'Could not delete this asset.');
+    } finally {
+      setDeleteSubmitting(false);
+    }
+  };
 
   // ── Render
   if (loading) {
@@ -420,7 +458,9 @@ const AssetList = () => {
       {/* ── Table ── */}
       <AssetTable 
         assets={filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)} 
-        onViewDetail={handleViewDetail} 
+        onViewDetail={handleViewDetail}
+        showDelete={isAdmin}
+        onRequestDelete={(asset) => setDeleteTarget(asset)}
       />
 
       {/* ── Pagination ── */}
@@ -436,6 +476,43 @@ const AssetList = () => {
         onClose={() => setIsCreateModalOpen(false)} 
         onSuccess={fetchAssets} 
       />
+
+      <ModalShell
+        isOpen={!!deleteTarget}
+        onClose={() => !deleteSubmitting && setDeleteTarget(null)}
+        title="Delete this asset?"
+        maxWidth="420px"
+      >
+        {deleteTarget && (
+          <>
+            <p className="al-delete-modal-lead">
+              <strong>{deleteTarget.brand} {deleteTarget.model}</strong>
+              <span className="al-delete-modal-sn"> · {deleteTarget.serialNumber}</span>
+            </p>
+            <p className="al-delete-modal-copy">
+              This will permanently delete the asset, its allocation history, and its condition reports from the system.
+            </p>
+            <div className="al-delete-modal-actions">
+              <button
+                type="button"
+                className="modal-btn-cancel"
+                disabled={deleteSubmitting}
+                onClick={() => setDeleteTarget(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="al-delete-modal-confirm"
+                disabled={deleteSubmitting}
+                onClick={handleConfirmDeleteFromList}
+              >
+                {deleteSubmitting ? 'Deleting…' : 'Delete permanently'}
+              </button>
+            </div>
+          </>
+        )}
+      </ModalShell>
     </div>
   );
 };

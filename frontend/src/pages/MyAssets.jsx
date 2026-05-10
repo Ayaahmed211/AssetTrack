@@ -1,11 +1,14 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import assetService from '../services/assetService';
 import ConditionReportForm from '../components/assets/ConditionReportForm';
 import AssetTypeChip from '../components/ui/AssetTypeChip';
 
 const MyAssets = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isDeveloper = user?.role === 'DEVELOPER';
   const [myAssets, setMyAssets] = useState([]);
   const [myReports, setMyReports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -130,26 +133,34 @@ const MyAssets = () => {
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <div>
-          <h2 style={{ color: 'var(--color-text-primary)', fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>My Assets</h2>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-            {myAssets.length} asset{myAssets.length !== 1 ? 's' : ''} assigned to you • {myReports.length} report{myReports.length !== 1 ? 's' : ''} filed
-          </p>
-        </div>
-        
-        {/* Search Input */}
-        <div style={{ position: 'relative', width: '300px' }}>
+      {/* Header — page title only for developer (navbar shows greeting); admin/manager title is in TopNavbar */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        {isDeveloper && (
+          <h2 style={{ color: 'var(--color-text-primary)', fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>
+            My Assets
+          </h2>
+        )}
+        <p
+          style={{
+            color: 'var(--color-text-secondary)',
+            fontSize: '0.875rem',
+            margin: isDeveloper ? '0.25rem 0 0 0' : '0 0 0 0',
+          }}
+        >
+          {myAssets.length} asset{myAssets.length !== 1 ? 's' : ''} assigned to you • {myReports.length} report{myReports.length !== 1 ? 's' : ''} filed
+        </p>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '320px', marginTop: '1rem' }}>
           <input
             type="text"
             placeholder={`Search ${activeTab}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label={activeTab === 'assets' ? 'Search assets' : 'Search reports'}
             style={{
               width: '100%', padding: '0.6rem 1rem 0.6rem 2.5rem', borderRadius: '0.75rem',
               border: '1px solid var(--color-border)', background: 'var(--color-card)',
-              color: 'var(--color-text-primary)', fontSize: '0.875rem', outline: 'none'
+              color: 'var(--color-text-primary)', fontSize: '0.875rem', outline: 'none',
+              boxSizing: 'border-box',
             }}
           />
           <span
@@ -234,13 +245,20 @@ const MyAssets = () => {
                   </div>
 
                   {/* Asset Details */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
-                    <div style={{ padding: '0.5rem', background: 'var(--color-background)', borderRadius: '0.4rem' }}>
-                      <p style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', margin: 0 }}>Status</p>
-                      <p style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)', margin: '0.15rem 0 0 0', fontWeight: 500 }}>
-                        {asset.status}
-                      </p>
-                    </div>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: isDeveloper ? '1fr' : '1fr 1fr',
+                    gap: '0.5rem',
+                    marginBottom: '1rem',
+                  }}>
+                    {!isDeveloper && (
+                      <div style={{ padding: '0.5rem', background: 'var(--color-background)', borderRadius: '0.4rem' }}>
+                        <p style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', margin: 0 }}>Status</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)', margin: '0.15rem 0 0 0', fontWeight: 500 }}>
+                          {asset.status}
+                        </p>
+                      </div>
+                    )}
                     <div style={{ padding: '0.5rem', background: 'var(--color-background)', borderRadius: '0.4rem' }}>
                       <p style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', margin: 0 }}>Warranty</p>
                       <p style={{ fontSize: '0.85rem', margin: '0.15rem 0 0 0', fontWeight: 500, ...getWarrantyStyle(asset.warrantyStatus) }}>
